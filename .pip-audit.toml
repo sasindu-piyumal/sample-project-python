@@ -1,0 +1,60 @@
+# ============================================================================
+# pip-audit Configuration File
+# ============================================================================
+# This configuration file establishes baseline scanning options and
+# vulnerability severity thresholds for consistent behavior across local
+# development and CI/CD environments.
+#
+# Documentation: https://github.com/pypa/pip-audit
+# ============================================================================
+
+# Vulnerability Severity Threshold Configuration
+# ============================================================================
+# Specifies the minimum vulnerability severity level that will be reported.
+# Severity levels (highest to lowest): critical, high, medium, low
+#
+# Current configuration: Report only CRITICAL and HIGH severity vulnerabilities
+# Rationale: This threshold balances security oversight with maintainability,
+# focusing on vulnerabilities with significant impact while avoiding alert
+# fatigue from lower-severity issues that may have mitigating factors.
+[tool.pip-audit]
+min-severity = "high"
+
+# Output Format Configuration
+# ============================================================================
+# Specifies the output format for pip-audit reports.
+# Options: json, text, cyclonedx
+#
+# Current configuration: JSON format for machine-parseable output
+# Rationale: JSON format enables easy integration with CI/CD pipelines,
+# automated analysis tools, and allows for programmatic processing of
+# vulnerability data. Text format is still available via command-line override.
+format = "json"
+
+# Vulnerability Suppression List
+# ============================================================================
+# This section contains known or accepted vulnerabilities that should be
+# suppressed from scan results. Each entry requires a vulnerability ID
+# (from the National Vulnerability Database or pip-audit database).
+#
+# Structure:
+#   [[tool.pip-audit.suppress]]
+#   id = "PYPA-XXXX" or "CVE-XXXX-XXXXX"  # The vulnerability ID
+#   reason = "Brief explanation of why this is suppressed"
+#
+# Examples (currently empty - add entries after initial vulnerability scan):
+# [[tool.pip-audit.suppress]]
+# id = "PYPA-2024-XXXX"
+# reason = "Vulnerability has been assessed and mitigated through [mitigation strategy]"
+
+# Scanning Options
+# ============================================================================
+# Additional scanning behavior configuration
+
+# Whether to skip checking specific packages during the scan
+# Currently empty - add package names if certain dependencies should be skipped
+skip = []
+
+# Whether to include development dependencies in the scan
+# Note: This is controlled via command-line but documented here for reference
+# To exclude dev dependencies: use --skip-editable or equivalent
