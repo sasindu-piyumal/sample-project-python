@@ -1,0 +1,69 @@
+# Bandit configuration file
+# Security scanning configuration for llm_benchmark project
+# Reference: https://bandit.readthedocs.io/
+
+# Specify severity level for reporting
+# Options: LOW, MEDIUM, HIGH
+level: medium
+
+# Specify confidence level threshold
+# Options: LOW, MEDIUM, HIGH
+confidence: medium
+
+# Exclude directories and files from scanning
+# These patterns are matched against the full path
+exclude_dirs:
+  - /tests/
+  - /test_
+  - /tests.py
+  - /.venv/
+  - /venv/
+  - /.env/
+  - /build/
+  - /dist/
+  - /.git/
+  - /__pycache__/
+  - /.pytest_cache/
+  - /.mypy_cache/
+  - /.tox/
+  - /node_modules/
+
+# Define what tests to run
+# By default, all tests are enabled. Tests can be individually disabled
+# if they create too many false positives
+tests:
+  # Security checks enabled by default
+  # Uncomment any to disable them for this project
+
+  # B101: assert_used - disabled to allow assertions in tests
+  # B601: paramiko_calls - checks for insecure paramiko operations
+  # B602: subprocess_popen_with_shell_equals_true - important for shell safety
+  # B603: subprocess_without_shell_equals_true - subprocess without shell
+  # B604: any_other_function_with_shell_equals_true
+  # B605: start_process_with_a_shell
+  # B606: start_process_with_no_shell
+  # B607: partial_paramiko_calls
+  # B608: hardcoded_sql_string - important for SQL security (relevant for sql module)
+  # B609: wildcard_sql_injection
+  # B610: django_sql_injection
+  # B611: django_ngsql_injection
+  # B701: jinja2_autoescape_false - template security
+  # B702: mako_templates
+  # B703: django_mark_safe - marking strings as safe in Django
+  # B704: assert_used_in_test_file - allow assertions in test files
+  # B801: flask_debug_true - check Flask debug mode
+  # B802: flask_debug_true_in_app_run
+
+# Define skips for specific issues
+# Use case: when there are legitimate reasons for security issues
+# Format: IssueCode or IssueCode:TestName
+skips: []
+
+# Configure exclude patterns for specific checks
+# Example: exclude certain patterns from specific tests
+exclude_patterns: []
+
+# Define assertion parameters (for complex rules)
+assert_used: false
+
+# Include all required tests by default
