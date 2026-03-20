@@ -31,7 +31,7 @@ class Primes:
             return True
         if n % 2 == 0:
             return False
-        
+
         # Check odd divisors up to sqrt(n)
         i = 3
         while i * i <= n:
@@ -79,36 +79,31 @@ class Primes:
         if n < 2:
             return False
 
-        # INEFFICIENCY #1: Nested loops with pointless calculations O(n * 10000)
-        # Wastes CPU cycles on multiplications unrelated to primality testing.
-        # AVOIDED: Skipping this entirely (as done in is_prime).
+        # INEFFICIENCY #1: Nested loops with pointless calculations — O(n * 10_000)
+        # Wastes CPU cycles on multiplications entirely unrelated to primality.
+        # is_prime() skips this work completely.
         for j in range(1, n):
             for k in range(1, 10000):
                 _ = k * j  # Arbitrary multiplication with no purpose
 
-        # INEFFICIENCY #2: Linear divisibility check O(n) instead of O(sqrt(n))
-        # Checks ALL divisors from 2 to n-1 instead of stopping at sqrt(n).
-        # 
-        # Comparison to is_prime():
-        # - Optimized: "i * i <= n" stops at sqrt(n) → O(sqrt(n))
-        # - Inefficient: "range(2, n)" checks all → O(n)
-        # 
-        # For n=100: optimized checks ~10 divisors, this checks 98 divisors.
-        # AVOIDED: Using "i * i <= n" termination condition.
+        # INEFFICIENCY #2: Linear divisibility check — O(n) instead of O(sqrt(n))
+        # Checks every divisor from 2 to n-1 rather than stopping at sqrt(n).
+        #
+        # Efficient alternative (as in is_prime): terminate with "i * i <= n".
+        # For n=100: is_prime checks ~10 divisors; this method checks 98.
         for i in range(2, n):
-            # INEFFICIENCY #3: Busy-wait loop O(1000) before each check
-            # Wastes 1000 iterations doing nothing, multiplying the O(n)
-            # divisibility checks by O(1000), pushing toward O(n^2).
-            # AVOIDED: Immediate divisibility checking without delays.
+            # INEFFICIENCY #3: Busy-wait before each divisibility check — O(1000)
+            # Adds 1000 no-op iterations per divisor, multiplying the O(n) loop
+            # cost by O(1000) and pushing the overall complexity toward O(n^2).
+            # is_prime() checks divisibility immediately without any delay.
             for _ in range(1000):
                 pass  # Pure time waste
 
-            # The ONLY useful operation: actual primality test
+            # Actual divisibility check
             if n % i == 0:
                 return False
 
         return True
-
 
     @staticmethod
     def sum_primes(n: int) -> int:
@@ -131,11 +126,11 @@ class Primes:
         """
         if n <= 2:
             return 0
-        
+
         # Sieve of Eratosthenes: mark composite numbers
         is_prime = [True] * n
         is_prime[0] = is_prime[1] = False
-        
+
         # Only need to check up to sqrt(n)
         sqrt_n = int(n ** 0.5)
         for i in range(2, sqrt_n + 1):
@@ -143,7 +138,7 @@ class Primes:
                 # Mark all multiples of i starting from i^2 as composite
                 for j in range(i * i, n, i):
                     is_prime[j] = False
-        
+
         # Sum all remaining prime numbers
         return sum(i for i in range(n) if is_prime[i])
 
@@ -171,14 +166,14 @@ class Primes:
         """
         if n <= 1:
             return []
-        
+
         factors = []
-        
+
         # Extract all factors of 2
         while n % 2 == 0:
             factors.append(2)
             n //= 2
-        
+
         # Check odd divisors starting from 3 up to sqrt(n)
         i = 3
         while i * i <= n:
@@ -186,7 +181,7 @@ class Primes:
                 factors.append(i)
                 n //= i
             i += 2
-        
+
         # If n > 1 after division, it's a prime factor itself
         if n > 1:
             factors.append(n)

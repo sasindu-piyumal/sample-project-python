@@ -21,7 +21,8 @@ class StrOps:
         Returns:
             bool: True if the string is a palindrome, False otherwise
         """
-        for i in range(len(s)):
-            if s[i] != s[len(s) - 1 - i]:
+        length = len(s)
+        for i in range(length // 2):
+            if s[i] != s[length - 1 - i]:
                 return False
         return True
