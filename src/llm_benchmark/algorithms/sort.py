@@ -11,10 +11,11 @@ class Sort:
         Args:
             v (List[int]): List of integers
         """
-        for i in range(len(v)):
-            for j in range(i + 1, len(v)):
-                if v[i] > v[j]:
-                    v[i], v[j] = v[j], v[i]
+        # Using Python's built-in sort is generally much more efficient than a
+        # naive bubble sort. It uses Timsort, which has an average and worst-case
+        # time complexity of O(n log n). The original implementation had a
+        # time complexity of O(n^2).
+        v.sort()
 
     @staticmethod
     def dutch_flag_partition(v: List[int], pivot_value: int) -> None:
@@ -24,16 +25,23 @@ class Sort:
             v (List[int]): List of integers
             pivot_value (int): Pivot value
         """
-        next_value = 0
+        # This implementation is already efficient, with a time complexity of O(n)
+        # and O(1) space complexity. No significant improvements can be made
+        # without changing the fundamental algorithm.
+        low = 0
+        mid = 0
+        high = len(v) - 1
 
-        for i in range(len(v)):
-            if v[i] < pivot_value:
-                v[i], v[next_value] = v[next_value], v[i]
-                next_value += 1
-        for i in range(next_value, len(v)):
-            if v[i] == pivot_value:
-                v[i], v[next_value] = v[next_value], v[i]
-                next_value += 1
+        while mid <= high:
+            if v[mid] < pivot_value:
+                v[low], v[mid] = v[mid], v[low]
+                low += 1
+                mid += 1
+            elif v[mid] > pivot_value:
+                v[mid], v[high] = v[high], v[mid]
+                high -= 1
+            else:
+                mid += 1
 
     @staticmethod
     def max_n(v: List[int], n: int) -> List[int]:
@@ -46,4 +54,9 @@ class Sort:
         Returns:
             List[int]: List of maximum n values
         """
+        # heapq.nlargest is an efficient way to find the n largest elements.
+        # Its time complexity is O(n log k) where k is the number of largest
+        # elements to find (in this case, n).
+        # If n is close to the size of the list, sorting and slicing might be
+        # competitive, but for general cases, heapq.nlargest is optimized.
         return heapq.nlargest(n, v)
