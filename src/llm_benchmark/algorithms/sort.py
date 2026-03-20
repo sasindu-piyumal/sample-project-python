@@ -1,5 +1,4 @@
 import heapq
-from sys import maxsize
 from typing import List
 
 
@@ -11,10 +10,9 @@ class Sort:
         Args:
             v (List[int]): List of integers
         """
-        for i in range(len(v)):
-            for j in range(i + 1, len(v)):
-                if v[i] > v[j]:
-                    v[i], v[j] = v[j], v[i]
+        # Use Python's highly optimized Timsort for in-place sorting (O(n log n))
+        # This replaces the previous O(n^2) nested-loop implementation.
+        v.sort()
 
     @staticmethod
     def dutch_flag_partition(v: List[int], pivot_value: int) -> None:
@@ -24,16 +22,19 @@ class Sort:
             v (List[int]): List of integers
             pivot_value (int): Pivot value
         """
-        next_value = 0
-
-        for i in range(len(v)):
-            if v[i] < pivot_value:
-                v[i], v[next_value] = v[next_value], v[i]
-                next_value += 1
-        for i in range(next_value, len(v)):
-            if v[i] == pivot_value:
-                v[i], v[next_value] = v[next_value], v[i]
-                next_value += 1
+        # Single-pass 3-way partitioning:
+        # Maintain three regions: [0:lo) < pivot, [lo:mid) == pivot, (hi:len-1] > pivot
+        lo, mid, hi = 0, 0, len(v) - 1
+        while mid <= hi:
+            if v[mid] < pivot_value:
+                v[lo], v[mid] = v[mid], v[lo]
+                lo += 1
+                mid += 1
+            elif v[mid] == pivot_value:
+                mid += 1
+            else:
+                v[mid], v[hi] = v[hi], v[mid]
+                hi -= 1
 
     @staticmethod
     def max_n(v: List[int], n: int) -> List[int]:
@@ -46,4 +47,14 @@ class Sort:
         Returns:
             List[int]: List of maximum n values
         """
+        # For very small n relative to len(v), a heap is efficient (O(len(v) log n)).
+        # For large n (close to len(v)), sorting the whole list is typically faster in CPython.
+        if n <= 0:
+            return []
+        m = len(v)
+        if n >= m:
+            return sorted(v, reverse=True)
+        # Heuristic threshold: when n is at least half of m, prefer full sort.
+        if n > m // 2:
+            return sorted(v, reverse=True)[:n]
         return heapq.nlargest(n, v)
