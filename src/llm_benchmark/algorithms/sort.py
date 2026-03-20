@@ -6,15 +6,18 @@ from typing import List
 class Sort:
     @staticmethod
     def sort_list(v: List[int]) -> None:
-        """Sort a list of integers in place
+        """Sort a list of integers in place using Timsort (O(n log n))
 
         Args:
-            v (List[int]): List of integers
+            v (List[int]): List of integers (modified in place)
+            
+        Complexity:
+            Time: O(n log n) average and worst case
+            Space: O(n) for temporary merge buffers
         """
-        for i in range(len(v)):
-            for j in range(i + 1, len(v)):
-                if v[i] > v[j]:
-                    v[i], v[j] = v[j], v[i]
+        sorted_list = sorted(v)
+        v.clear()
+        v.extend(sorted_list)
 
     @staticmethod
     def dutch_flag_partition(v: List[int], pivot_value: int) -> None:
