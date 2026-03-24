@@ -6,10 +6,10 @@ class Primes:
 
     @staticmethod
     def is_prime(n: int) -> bool:
-        """Check if a number is prime using trial division.
+        """Check if a number is prime using an optimized trial division.
 
-        Uses an optimized O(sqrt(n)) algorithm that checks divisibility only by
-        2 and odd numbers up to the square root of n.
+        Uses a 6k ± 1 stepping method to check divisibility efficiently up to
+        sqrt(n).
 
         Args:
             n: The number to check for primality.
@@ -27,17 +27,19 @@ class Primes:
         """
         if n < 2:
             return False
-        if n == 2:
+        if n in (2, 3):
             return True
-        if n % 2 == 0:
+        if n % 2 == 0 or n % 3 == 0:
             return False
-        
-        # Check odd divisors up to sqrt(n)
-        i = 3
+
+        # Check candidates of the form 6k ± 1 up to sqrt(n)
+        i = 5
+        step = 2
         while i * i <= n:
             if n % i == 0:
                 return False
-            i += 2
+            i += step
+            step = 6 - step  # alternate steps to cover 6k ± 1
         return True
 
     @staticmethod
