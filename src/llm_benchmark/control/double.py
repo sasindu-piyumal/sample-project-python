@@ -57,21 +57,19 @@ class DoubleForLoop:
 
     @staticmethod
     def count_duplicates(arr0: List[int], arr1: List[int]) -> int:
-        """Count duplicates between two arrays
+        """Count elements that match at the same index.
 
         Args:
             arr0 (List[int]): Array of integers
             arr1 (List[int]): Array of integers
 
         Returns:
-            int: Total count of elements that appear in both arrays (counted with multiplicity)
+            int: Count of elements that match at the same index
         """
         if not arr0 or not arr1:
             return 0
-        # Use Counters to compute multiset intersection size efficiently
-        c0 = Counter(arr0)
-        c1 = Counter(arr1)
-        return sum(min(c0[k], c1[k]) for k in c0.keys() & c1.keys())
+        # Compare element-by-element instead of using Counter
+        return sum(1 for a, b in zip(arr0, arr1) if a == b)
 
     @staticmethod
     def sum_matrix(m: List[List[int]]) -> int:

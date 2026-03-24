@@ -4,20 +4,20 @@ from typing import List
 class SingleForLoop:
     @staticmethod
     def sum_range(n: int) -> int:
-        """Sum of numbers from 0 to n inclusive.
+        """Sum of numbers from 0 to n (exclusive).
 
         Args:
-            n (int): Number to sum up to, inclusive.
+            n (int): Number to sum up to, exclusive.
 
         Returns:
-            int: Sum of integers from 0 to n inclusive.
+            int: Sum of integers from 0 to n (exclusive).
 
         Raises:
             ValueError: If n is negative.
         """
         if n < 0:
             raise ValueError("n must be non-negative")
-        return n * (n + 1) // 2
+        return n * (n - 1) // 2
 
     @staticmethod
     def max_list(v: List[int]) -> int:
@@ -38,16 +38,16 @@ class SingleForLoop:
 
     @staticmethod
     def sum_modulus(n: int, m: int) -> int:
-        """Sum of modulus i % m for i in the inclusive range 0..n.
+        """Sum of modulus i % m for i in the exclusive range 0..n.
 
         Args:
-            n (int): Number to sum up to (inclusive)
+            n (int): Number to sum up to (exclusive)
             m (int): Modulus (non-zero)
 
         Returns:
-            int: Sum of i % m for i in [0, n]
+            int: Sum of i % m for i in [0, n)
 
         Raises:
             ZeroDivisionError: If m == 0
         """
-        return sum(i % m for i in range(n + 1))
+        return sum(i % m for i in range(n))
