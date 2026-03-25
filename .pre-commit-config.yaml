@@ -1,0 +1,38 @@
+# Pre-commit hooks configuration for automated code quality checks
+# Install hooks with: pre-commit install
+# Run hooks manually with: pre-commit run --all-files
+
+repos:
+  # Black code formatter
+  - repo: https://github.com/psf/black
+    rev: 23.12.0
+    hooks:
+      - id: black
+        language_version: python3
+        files: ^(src|tests)/.*\.py$
+
+  # isort import sorter
+  - repo: https://github.com/PyCQA/isort
+    rev: 5.13.1
+    hooks:
+      - id: isort
+        files: ^(src|tests)/.*\.py$
+
+  # Ruff linter for code quality checks
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.1.0
+    hooks:
+      - id: ruff
+        files: ^(src|tests)/.*\.py$
+      - id: ruff-format
+        files: ^(src|tests)/.*\.py$
+
+  # Trailing whitespace remover
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-added-large-files
+        args: ['--maxkb=1000']
