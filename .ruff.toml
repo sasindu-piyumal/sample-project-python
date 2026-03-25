@@ -25,7 +25,7 @@ ignore = [
     "W503",   # Line break before binary operator (conflicts with black)
 ]
 
-# Directories to check
+# Directories to check (applies to both source and test files)
 include = ["src/**/*.py", "tests/**/*.py"]
 
 # Directories to exclude
@@ -35,7 +35,7 @@ exclude = [
     "__pycache__",
     "dist",
     "build",
-    ".pytest_cache",
+    ".pytest_cache",  # Pytest cache directory
 ]
 
 # Configuration for isort compatibility

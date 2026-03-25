@@ -9,6 +9,7 @@ repos:
     hooks:
       - id: black
         language_version: python3
+        # Apply to both source and test files
         files: ^(src|tests)/.*\.py$
 
   # isort import sorter
@@ -16,6 +17,7 @@ repos:
     rev: 5.13.1
     hooks:
       - id: isort
+        # Apply to both source and test files
         files: ^(src|tests)/.*\.py$
 
   # Ruff linter for code quality checks
@@ -23,8 +25,10 @@ repos:
     rev: v0.1.0
     hooks:
       - id: ruff
+        # Apply to both source and test files
         files: ^(src|tests)/.*\.py$
       - id: ruff-format
+        # Apply to both source and test files
         files: ^(src|tests)/.*\.py$
 
   # Trailing whitespace remover
