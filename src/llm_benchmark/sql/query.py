@@ -16,7 +16,7 @@ class SqlQuery:
         conn = sqlite3.connect("data/chinook.db")
         cur = conn.cursor()
 
-        cur.execute(f"SELECT * FROM Album WHERE Title = '{name}'")
+        cur.execute("SELECT * FROM Album WHERE Title = ?", (name,))
         return len(cur.fetchall()) > 0
 
     @staticmethod

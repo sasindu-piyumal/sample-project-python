@@ -14,6 +14,17 @@ def test_query_album(name: str, expected: bool) -> None:
     assert SqlQuery.query_album(name) == expected
 
 
+def test_query_album_sql_injection() -> None:
+    """SQL injection payload should return empty result, not cause an error."""
+    result = SqlQuery.query_album("'; DROP TABLE Album; --")
+    assert result is False
+
+
+def test_query_album_legitimate_title() -> None:
+    """A known album title should be found via the parameterized query."""
+    assert SqlQuery.query_album("Presence") is True
+
+
 def test_benchmark_query_album(benchmark) -> None:
     benchmark(SqlQuery.query_album, "Presence")
 
