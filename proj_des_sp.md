@@ -83,10 +83,12 @@ llm-benchmark-py/
    - Focus: Control structure patterns and efficiency
 
 ### 4. **Generator Module** (`generator/`)
-   - **gen_list.py**: Utility functions for generating test data
-     - `random_list(n, m)`: Generate list of n random integers (0 to m)
+   - **gen_list.py**: Utility functions for generating cryptographically secure test data
+     - `random_list(n, m)`: Generate list of n random integers (0 to m) using `secrets` module
      - `random_matrix(n, m)`: Generate random matrices for testing
-   - Focus: Test data generation for benchmarking
+     - **Security:** Uses cryptographically secure random number generation
+     - **Validation:** Input validation to prevent negative/invalid parameters
+   - Focus: Secure test data generation for benchmarking
 
 ### 5. **SQL Module** (`sql/`)
    - **query.py**: Database query implementations using SQLite
@@ -222,11 +224,12 @@ poetry run main
 
 ## ✅ Project Status
 
-- **Version:** 0.1.0 (Active Development)
+- **Version:** 0.1.1 (Active Development)
 - **Primary Optimization:** ✅ Complete (sort_list O(n log n) implementation)
-- **Documentation:** ✅ Comprehensive (4 main documents, ~1,200 lines)
-- **Testing:** ✅ Full coverage with benchmark verification
+- **Documentation:** ✅ Comprehensive (5 main documents + security docs)
+- **Testing:** ✅ Full coverage with benchmark and security verification
 - **Performance Metrics:** ✅ Verified (7.5×–3,010× improvement)
+- **Security:** ✅ Cryptographically secure random generation (see SECURITY.md)
 
 ---
 
