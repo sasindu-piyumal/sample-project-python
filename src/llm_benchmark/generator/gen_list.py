@@ -14,7 +14,7 @@ class GenList:
         Returns:
             List[int]: List of random integers
         """
-        return [randint(0, m) for _ in range(n)]
+        return [randint(0, m - 1) for _ in range(n)]
 
     @staticmethod
     def random_matrix(n: int, m: int) -> List[List[int]]:
