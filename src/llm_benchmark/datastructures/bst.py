@@ -1,4 +1,4 @@
-from typing import Optional, List, Any
+from typing import Optional, List, Any, Tuple
 
 
 class Node:
@@ -54,34 +54,40 @@ class Tree:
             self._size = 1
             self._height = 0
         else:
-            self._size += self._insert_recursive(self._root, value)
-            self._height = self._calculate_height(self._root)
+            inserted, depth = self._insert_recursive(self._root, value, 0)
+            if inserted:
+                self._size += 1
+                if depth > self._height:
+                    self._height = depth
     
-    def _insert_recursive(self, node: Node, value: Any) -> int:
+    def _insert_recursive(self, node: Node, value: Any, depth: int) -> Tuple[bool, int]:
         """Recursively insert a value into the tree.
         
         Args:
             node: Current node in the tree
             value: Value to insert
+            depth: Depth of the current node
             
         Returns:
-            1 if a new node was inserted, 0 if value already exists
+            Tuple (inserted, depth_of_insert):
+                - inserted: True if a new node was inserted, False if value already exists
+                - depth_of_insert: Depth at which the new node was inserted (undefined if not inserted)
         """
         if value < node.value:
             if node.left is None:
                 node.left = Node(value)
-                return 1
+                return True, depth + 1
             else:
-                return self._insert_recursive(node.left, value)
+                return self._insert_recursive(node.left, value, depth + 1)
         elif value > node.value:
             if node.right is None:
                 node.right = Node(value)
-                return 1
+                return True, depth + 1
             else:
-                return self._insert_recursive(node.right, value)
+                return self._insert_recursive(node.right, value, depth + 1)
         else:
             # Duplicate value - don't insert
-            return 0
+            return False, depth
     
     @property
     def root(self) -> Optional[Node]:
