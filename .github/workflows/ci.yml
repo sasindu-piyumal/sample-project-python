@@ -19,5 +19,7 @@ jobs:
       run: pip install poetry
     - name: Install dependencies
       run: poetry install
+    - name: Scan dependencies for vulnerabilities
+      run: poetry run pip-audit
     - name: Run Bandit Security Linter
       run: poetry run bandit -r . -ll -f json -o bandit-results.json --exit-on-failed-severity high --exit-on-failed-confidence high
