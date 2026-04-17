@@ -11,10 +11,7 @@ class Sort:
         Args:
             v (List[int]): List of integers
         """
-        for i in range(len(v)):
-            for j in range(i + 1, len(v)):
-                if v[i] > v[j]:
-                    v[i], v[j] = v[j], v[i]
+        v.sort()
 
     @staticmethod
     def dutch_flag_partition(v: List[int], pivot_value: int) -> None:
@@ -24,16 +21,20 @@ class Sort:
             v (List[int]): List of integers
             pivot_value (int): Pivot value
         """
-        next_value = 0
+        smaller = 0
+        equal = 0
+        larger = len(v)
 
-        for i in range(len(v)):
-            if v[i] < pivot_value:
-                v[i], v[next_value] = v[next_value], v[i]
-                next_value += 1
-        for i in range(next_value, len(v)):
-            if v[i] == pivot_value:
-                v[i], v[next_value] = v[next_value], v[i]
-                next_value += 1
+        while equal < larger:
+            if v[equal] < pivot_value:
+                v[smaller], v[equal] = v[equal], v[smaller]
+                smaller += 1
+                equal += 1
+            elif v[equal] == pivot_value:
+                equal += 1
+            else:
+                larger -= 1
+                v[equal], v[larger] = v[larger], v[equal]
 
     @staticmethod
     def max_n(v: List[int], n: int) -> List[int]:
