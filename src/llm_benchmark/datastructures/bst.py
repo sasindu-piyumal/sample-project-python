@@ -54,10 +54,11 @@ class Tree:
             self._size = 1
             self._height = 0
         else:
-            self._size += self._insert_recursive(self._root, value)
-            self._height = self._calculate_height(self._root)
+            inserted, new_height = self._insert_recursive(self._root, value)
+            self._size += inserted
+            self._height = new_height
     
-    def _insert_recursive(self, node: Node, value: Any) -> int:
+    def _insert_recursive(self, node: Node, value: Any) -> tuple:
         """Recursively insert a value into the tree.
         
         Args:
@@ -65,23 +66,44 @@ class Tree:
             value: Value to insert
             
         Returns:
-            1 if a new node was inserted, 0 if value already exists
+            Tuple of (1 if a new node was inserted or 0 if value already exists,
+                     new height of the subtree)
         """
         if value < node.value:
             if node.left is None:
                 node.left = Node(value)
-                return 1
+                new_height = 1 + max(0, self._get_height(node.right))
+                return (1, new_height)
             else:
-                return self._insert_recursive(node.left, value)
+                inserted, _ = self._insert_recursive(node.left, value)
+                new_height = 1 + max(self._get_height(node.left), self._get_height(node.right))
+                return (inserted, new_height)
         elif value > node.value:
             if node.right is None:
                 node.right = Node(value)
-                return 1
+                new_height = 1 + max(self._get_height(node.left), 0)
+                return (1, new_height)
             else:
-                return self._insert_recursive(node.right, value)
+                inserted, _ = self._insert_recursive(node.right, value)
+                new_height = 1 + max(self._get_height(node.left), self._get_height(node.right))
+                return (inserted, new_height)
         else:
             # Duplicate value - don't insert
-            return 0
+            new_height = 1 + max(self._get_height(node.left), self._get_height(node.right))
+            return (0, new_height)
+    
+    def _get_height(self, node: Optional[Node]) -> int:
+        """Get the height of a node.
+        
+        Args:
+            node: The node to get height for
+            
+        Returns:
+            The height of the node (-1 for None, 0 for leaf, etc.)
+        """
+        if node is None:
+            return -1
+        return self._calculate_height(node)
     
     @property
     def root(self) -> Optional[Node]:
