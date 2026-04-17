@@ -21,7 +21,7 @@ class StrOps:
         Returns:
             bool: True if the string is a palindrome, False otherwise
         """
-        for i in range(len(s)):
-            if s[i] != s[len(s) - 1 - i]:
-                return False
-        return True
+        # Comparing the string with its reverse is generally more efficient
+        # and Pythonic for this task. String slicing for reversal [::-1]
+        # creates a new reversed string, and then a direct comparison is made.
+        return s == s[::-1]

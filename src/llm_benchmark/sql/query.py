@@ -3,6 +3,33 @@ from textwrap import dedent
 
 
 class SqlQuery:
+    _JOIN_ALBUMS_QUERY = dedent(
+        """\
+        SELECT 
+            t.Name AS TrackName,
+            a.Title AS AlbumName,
+            ar.Name AS ArtistName
+        FROM 
+            Track t
+        JOIN Album a ON a.AlbumId = t.AlbumId
+        JOIN Artist ar ON ar.ArtistId = a.ArtistId
+        """
+    )
+    
+    _TOP_INVOICES_QUERY = dedent(
+        """\
+        SELECT 
+            i.InvoiceId, 
+            c.FirstName || ' ' || c.LastName AS CustomerName, 
+            i.Total
+        FROM 
+            Invoice i
+        JOIN Customer c ON c.CustomerId = i.CustomerId
+        ORDER BY i.Total DESC
+        LIMIT 10
+        """
+    )
+
     @staticmethod
     def query_album(name: str) -> bool:
         """Check if an album exists
@@ -32,20 +59,7 @@ class SqlQuery:
         with sqlite3.connect("data/chinook.db") as conn:
             cur = conn.cursor()
 
-            cur.execute(
-                dedent(
-                    """\
-                    SELECT 
-                        t.Name AS TrackName,
-                        a.Title AS AlbumName,
-                        ar.Name AS ArtistName
-                    FROM 
-                        Track t
-                    JOIN Album a ON a.AlbumId = t.AlbumId
-                    JOIN Artist ar ON ar.ArtistId = a.ArtistId
-                    """
-                )
-            )
+            cur.execute(SqlQuery._JOIN_ALBUMS_QUERY)
             return cur.fetchall()
 
     @staticmethod
@@ -58,19 +72,5 @@ class SqlQuery:
         with sqlite3.connect("data/chinook.db") as conn:
             cur = conn.cursor()
 
-            cur.execute(
-                dedent(
-                    """\
-                    SELECT 
-                        i.InvoiceId, 
-                        c.FirstName || ' ' || c.LastName AS CustomerName, 
-                        i.Total
-                    FROM 
-                        Invoice i
-                    JOIN Customer c ON c.CustomerId = i.CustomerId
-                    ORDER BY i.Total DESC
-                    LIMIT 10
-                    """
-                )
-            )
+            cur.execute(SqlQuery._TOP_INVOICES_QUERY)
             return cur.fetchall()
