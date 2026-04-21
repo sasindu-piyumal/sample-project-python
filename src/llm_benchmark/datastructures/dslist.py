@@ -4,7 +4,12 @@ from typing import List
 class DsList:
     @staticmethod
     def modify_list(v: List[int]) -> List[int]:
-        """Modify a list by adding 1 to each element
+        """Modify a list by adding 1 to each element.
+
+        Uses a list comprehension which executes the loop body entirely in C
+        (CPython), avoiding per-iteration Python bytecode dispatch overhead
+        and repeated ``list.append`` attribute lookups present in the previous
+        implementation.
 
         Args:
             v (List[int]): List of integers
@@ -12,15 +17,15 @@ class DsList:
         Returns:
             List[int]: Modified list of integers
         """
-        ret = []
-        for i in range(len(v)):
-            ret.append(v[i] + 1)
-        return ret
+        return [x + 1 for x in v]
 
     @staticmethod
     def search_list(v: List[int], n: int) -> List[int]:
         """Search a list for a value, returning a list
-        of indices where the value is found
+        of indices where the value is found.
+
+        Uses a list comprehension to keep the hot path at C speed instead of
+        repeatedly calling ``list.append`` from Python bytecode.
 
         Args:
             v (List[int]): List of integers
@@ -29,15 +34,13 @@ class DsList:
         Returns:
             List[int]: List of indices where the value is found
         """
-        ret = []
-        for i in range(len(v)):
-            if v[i] == n:
-                ret.append(i)
-        return ret
+        return [i for i, x in enumerate(v) if x == n]
 
     @staticmethod
     def sort_list(v: List[int]) -> List[int]:
-        """Sort a list of integers, returns a copy
+        """Sort a list of integers, returns a copy.
+
+        Delegates to Python's built-in Timsort (O(n log n), implemented in C).
 
         Args:
             v (List[int]): List of integers
@@ -49,7 +52,12 @@ class DsList:
 
     @staticmethod
     def reverse_list(v: List[int]) -> List[int]:
-        """Reverse a list of integers, returns a copy
+        """Reverse a list of integers, returns a copy.
+
+        Uses the ``v[::-1]`` slice, which is implemented as a single C-level
+        ``memcpy``-style traversal — no Python-level loop, no per-iteration
+        index arithmetic (``len(v) - 1 - i`` in the old code), and no
+        ``list.append`` call overhead.
 
         Args:
             v (List[int]): List of integers
@@ -57,14 +65,16 @@ class DsList:
         Returns:
             List[int]: Reversed list of integers
         """
-        ret = []
-        for i in range(len(v)):
-            ret.append(v[len(v) - 1 - i])
-        return ret
+        return v[::-1]
 
     @staticmethod
     def rotate_list(v: List[int], n: int) -> List[int]:
-        """Rotate a list of integers by n positions
+        """Rotate a list of integers by n positions.
+
+        Replaces two Python-level ``append`` loops with a pair of C-level
+        slice operations joined by list concatenation.  On CPython this
+        involves two contiguous memory copies rather than n individual
+        interpreter round-trips.
 
         Args:
             v (List[int]): List of integers
@@ -76,16 +86,16 @@ class DsList:
         if not v:
             return []
         n = n % len(v)
-        ret = []
-        for i in range(n, len(v)):
-            ret.append(v[i])
-        for i in range(n):
-            ret.append(v[i])
-        return ret
+        return v[n:] + v[:n]
 
     @staticmethod
     def merge_lists(v1: List[int], v2: List[int]) -> List[int]:
-        """Merge two lists of integers, returns a copy
+        """Merge two lists of integers, returns a copy.
+
+        Uses the ``+`` operator on lists, which CPython implements as a single
+        C-level allocation followed by two ``memcpy`` calls — replacing two
+        separate Python-level ``append`` loops and their associated bytecode
+        overhead.
 
         Args:
             v1 (List[int]): First list of integers
@@ -94,9 +104,4 @@ class DsList:
         Returns:
             List[int]: Merged list of integers
         """
-        ret = []
-        for i in range(len(v1)):
-            ret.append(v1[i])
-        for i in range(len(v2)):
-            ret.append(v2[i])
-        return ret
+        return v1 + v2
