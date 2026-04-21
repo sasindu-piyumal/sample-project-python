@@ -27,7 +27,8 @@ class SqlQuery:
         """Join the Album, Artist, and Track tables
 
         Returns:
-            list:
+            list: List of tuples, where each tuple contains
+                  (TrackName: str, AlbumName: str, ArtistName: str)
         """
         with sqlite3.connect("data/chinook.db") as conn:
             cur = conn.cursor()
