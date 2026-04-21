@@ -55,4 +55,5 @@ def test_prime_factors(n: int, factors: List[int]) -> None:
 
 
 def test_benchmark_prime_factors(benchmark) -> None:
-    benchmark(Primes.prime_factors, 84)
+    result = benchmark(Primes.prime_factors, 84)
+    assert result == [2, 2, 3, 7]
