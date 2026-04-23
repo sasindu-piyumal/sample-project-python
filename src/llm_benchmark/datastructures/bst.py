@@ -10,6 +10,8 @@ class Node:
         right: Reference to the right child node (None if no right child)
     """
 
+    __slots__ = ('value', 'left', 'right')
+
     def __init__(self, value: Any) -> None:
         """Initialize a Node with a value and no children.
         
@@ -27,6 +29,8 @@ class Tree:
     Maintains BST invariant: for each node, all values in left subtree < node value < all values in right subtree.
     Tracks size (number of nodes) and height of the tree.
     """
+
+    __slots__ = ('_root', '_size', '_height')
 
     def __init__(self, values: Optional[List[Any]] = None) -> None:
         """Initialize a Tree with optional initial values.
