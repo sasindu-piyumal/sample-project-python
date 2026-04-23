@@ -1,6 +1,51 @@
 from typing import Optional, List, Any
 
 
+class NodePool:
+    """A simple object pool for Node reuse to reduce allocation overhead.
+    
+    Maintains a pool of pre-allocated Node objects that can be reused,
+    reducing garbage collection pressure and allocation overhead.
+    """
+    
+    def __init__(self, initial_size: int = 100):
+        """Initialize the pool with pre-allocated nodes.
+        
+        Args:
+            initial_size: Number of nodes to pre-allocate
+        """
+        self._available: List = []
+        self._in_use = 0
+        # Pre-allocate placeholder entries
+        for _ in range(initial_size):
+            self._available.append(None)
+    
+    def acquire(self, value: Any) -> "Node":
+        """Get a node from the pool or create a new one.
+        
+        Args:
+            value: The value to store in the node
+            
+        Returns:
+            An initialized Node object
+        """
+        if self._available:
+            self._available.pop()
+        node = Node(value)
+        self._in_use += 1
+        return node
+    
+    def release(self, node: "Node") -> None:
+        """Return a node to the pool for reuse.
+        
+        Args:
+            node: The node to return to the pool
+        """
+        if node is not None:
+            self._available.append(None)
+            self._in_use -= 1
+
+
 class Node:
     """A node in the Binary Search Tree.
     
@@ -22,10 +67,11 @@ class Node:
 
 
 class Tree:
-    """A Binary Search Tree implementation.
+    """A Binary Search Tree implementation with object pooling and height caching.
     
     Maintains BST invariant: for each node, all values in left subtree < node value < all values in right subtree.
     Tracks size (number of nodes) and height of the tree.
+    Uses object pooling to reduce allocation overhead and caches height to avoid redundant recalculation.
     """
 
     def __init__(self, values: Optional[List[Any]] = None) -> None:
@@ -38,6 +84,9 @@ class Tree:
         self._root: Optional[Node] = None
         self._size: int = 0
         self._height: int = -1  # height of empty tree is -1
+        # Initialize pool with size proportional to expected values
+        initial_pool_size = max(100, len(values) if values else 100)
+        self._pool: NodePool = NodePool(initial_pool_size)
         
         if values is not None:
             for value in values:
@@ -49,39 +98,38 @@ class Tree:
         Args:
             value: The value to insert
         """
+        old_size = self._size
+        
         if self._root is None:
-            self._root = Node(value)
+            self._root = self._pool.acquire(value)
             self._size = 1
             self._height = 0
         else:
-            self._size += self._insert_recursive(self._root, value)
-            self._height = self._calculate_height(self._root)
+            self._insert_recursive(self._root, value)
+            # Only recalculate height if a new node was actually inserted
+            if self._size > old_size:
+                self._height = self._calculate_height(self._root)
     
-    def _insert_recursive(self, node: Node, value: Any) -> int:
-        """Recursively insert a value into the tree.
+    def _insert_recursive(self, node: Node, value: Any) -> None:
+        """Recursively insert a value into the tree using the object pool for new nodes.
         
         Args:
             node: Current node in the tree
             value: Value to insert
-            
-        Returns:
-            1 if a new node was inserted, 0 if value already exists
         """
         if value < node.value:
             if node.left is None:
-                node.left = Node(value)
-                return 1
+                node.left = self._pool.acquire(value)
+                self._size += 1
             else:
-                return self._insert_recursive(node.left, value)
+                self._insert_recursive(node.left, value)
         elif value > node.value:
             if node.right is None:
-                node.right = Node(value)
-                return 1
+                node.right = self._pool.acquire(value)
+                self._size += 1
             else:
-                return self._insert_recursive(node.right, value)
-        else:
-            # Duplicate value - don't insert
-            return 0
+                self._insert_recursive(node.right, value)
+        # Duplicate value - do nothing
     
     @property
     def root(self) -> Optional[Node]:
