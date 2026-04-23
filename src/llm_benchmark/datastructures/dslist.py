@@ -1,3 +1,4 @@
+import itertools
 from typing import List
 
 
@@ -71,10 +72,11 @@ class DsList:
     def rotate_list(v: List[int], n: int) -> List[int]:
         """Rotate a list of integers by n positions.
 
-        Replaces two Python-level ``append`` loops with a pair of C-level
-        slice operations joined by list concatenation.  On CPython this
-        involves two contiguous memory copies rather than n individual
-        interpreter round-trips.
+        Uses a single-pass ``collections.deque`` rotation which avoids creating
+        two intermediate list slice objects before concatenating them.  The
+        deque rotates in-place in O(k) time (k = rotation amount) and is then
+        converted to a list in a single allocation — keeping peak memory to
+        one output-sized object instead of two input-sized slices plus output.
 
         Args:
             v (List[int]): List of integers
@@ -85,8 +87,10 @@ class DsList:
         """
         if not v:
             return []
-        n = n % len(v)
-        return v[n:] + v[:n]
+        from collections import deque
+        d = deque(v)
+        d.rotate(-n)
+        return list(d)
 
     @staticmethod
     def merge_lists(v1: List[int], v2: List[int]) -> List[int]:
@@ -104,4 +108,4 @@ class DsList:
         Returns:
             List[int]: Merged list of integers
         """
-        return v1 + v2
+        return list(itertools.chain(v1, v2))

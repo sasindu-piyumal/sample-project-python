@@ -32,7 +32,7 @@ class Primes:
             return True
         if n % 2 == 0:
             return False
-        
+
         # Check odd divisors up to sqrt(n)
         i = 3
         while i * i <= n:
@@ -81,26 +81,13 @@ class Primes:
             return False
 
         # INEFFICIENCY #1: Nested loops with pointless calculations O(n * 10000)
-        # Wastes CPU cycles on multiplications unrelated to primality testing.
-        # AVOIDED: Skipping this entirely (as done in is_prime).
         for j in range(1, n):
             for k in range(1, 10000):
                 _ = k * j  # Arbitrary multiplication with no purpose
 
         # INEFFICIENCY #2: Linear divisibility check O(n) instead of O(sqrt(n))
-        # Checks ALL divisors from 2 to n-1 instead of stopping at sqrt(n).
-        # 
-        # Comparison to is_prime():
-        # - Optimized: "i * i <= n" stops at sqrt(n) → O(sqrt(n))
-        # - Inefficient: "range(2, n)" checks all → O(n)
-        # 
-        # For n=100: optimized checks ~10 divisors, this checks 98 divisors.
-        # AVOIDED: Using "i * i <= n" termination condition.
         for i in range(2, n):
             # INEFFICIENCY #3: Busy-wait loop O(1000) before each check
-            # Wastes 1000 iterations doing nothing, multiplying the O(n)
-            # divisibility checks by O(1000), pushing toward O(n^2).
-            # AVOIDED: Immediate divisibility checking without delays.
             for _ in range(1000):
                 pass  # Pure time waste
 
@@ -109,7 +96,6 @@ class Primes:
                 return False
 
         return True
-
 
     @staticmethod
     def sum_primes(n: int) -> int:
@@ -132,21 +118,21 @@ class Primes:
         """
         if n <= 2:
             return 0
-        
+
         # bytearray uses 1 byte per element vs ~56-byte Python bool objects in
         # a list, giving ~8x memory reduction for large n.
         is_prime = bytearray(b'\x01' * n)
         is_prime[0] = is_prime[1] = 0
-        
+
         # Only need to check up to sqrt(n)
         sqrt_n = int(n ** 0.5)
         for i in range(2, sqrt_n + 1):
             if is_prime[i]:
                 # Bulk-zero all multiples of i via a single C-level slice
-                # assignment (memset equivalent), avoiding a Python for-loop
+                # assignment (equivalent to memset), avoiding a Python for-loop
                 # and its per-iteration bytecode + object allocation overhead.
                 is_prime[i * i::i] = bytes(len(is_prime[i * i::i]))
-        
+
         # Sum all remaining prime numbers
         return sum(i for i in range(n) if is_prime[i])
 
@@ -174,17 +160,17 @@ class Primes:
         """
         if n <= 1:
             return []
-        
+
         # array.array('l') stores C signed longs (8 bytes/element on 64-bit),
         # avoiding the ~28-byte Python int heap object overhead per factor.
         # list() converts back to a plain list so the public API is unchanged.
         factors = _array.array('l')
-        
+
         # Extract all factors of 2
         while n % 2 == 0:
             factors.append(2)
             n //= 2
-        
+
         # Check odd divisors starting from 3 up to sqrt(n)
         i = 3
         while i * i <= n:
@@ -192,10 +178,9 @@ class Primes:
                 factors.append(i)
                 n //= i
             i += 2
-        
+
         # If n > 1 after division, it's a prime factor itself
         if n > 1:
             factors.append(n)
+
         return list(factors)
-        
-        return factors
