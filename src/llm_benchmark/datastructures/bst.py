@@ -54,34 +54,54 @@ class Tree:
             self._size = 1
             self._height = 0
         else:
-            self._size += self._insert_recursive(self._root, value)
+            current_height, nodes_inserted = self._insert_recursive(self._root, value)
+            self._size += nodes_inserted
             self._height = self._calculate_height(self._root)
     
-    def _insert_recursive(self, node: Node, value: Any) -> int:
-        """Recursively insert a value into the tree.
+    def _insert_recursive(self, node: Node, value: Any) -> tuple[int, int]:
+        """Recursively insert a value into the tree with incremental height tracking.
         
         Args:
             node: Current node in the tree
             value: Value to insert
             
         Returns:
-            1 if a new node was inserted, 0 if value already exists
+            A tuple containing:
+                - subtree_height_after_insertion (int): Height of the subtree rooted at the 
+                  current node after insertion. Height is defined as the number of edges from 
+                  the node to the deepest leaf (-1 for None, 0 for leaf node).
+                - nodes_inserted_count (int): Number of nodes inserted (1 if a new node was 
+                  inserted, 0 if the value already exists as a duplicate).
         """
         if value < node.value:
             if node.left is None:
                 node.left = Node(value)
-                return 1
+                # New leaf insertion: height of new child is 0, current node height is 1
+                return (1, 1)
             else:
-                return self._insert_recursive(node.left, value)
+                left_height, nodes_inserted = self._insert_recursive(node.left, value)
+                # Current node's height is 1 + max(left_subtree_height, right_subtree_height)
+                right_height = self._calculate_height(node.right)
+                current_height = 1 + max(left_height, right_height)
+                return (current_height, nodes_inserted)
         elif value > node.value:
             if node.right is None:
                 node.right = Node(value)
-                return 1
+                # New leaf insertion: height of new child is 0, current node height is 1
+                return (1, 1)
             else:
-                return self._insert_recursive(node.right, value)
+                right_height, nodes_inserted = self._insert_recursive(node.right, value)
+                # Current node's height is 1 + max(left_subtree_height, right_subtree_height)
+                left_height = self._calculate_height(node.left)
+                current_height = 1 + max(left_height, right_height)
+                return (current_height, nodes_inserted)
         else:
-            # Duplicate value - don't insert
-            return 0
+            # Duplicate value - don't insert, return current subtree height and 0 nodes inserted
+            current_height = 1 + max(
+                self._calculate_height(node.left),
+                self._calculate_height(node.right)
+            )
+            return (current_height, 0)
     
     @property
     def root(self) -> Optional[Node]:
