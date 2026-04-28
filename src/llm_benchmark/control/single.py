@@ -50,4 +50,5 @@ class SingleForLoop:
         Raises:
             ZeroDivisionError: If m == 0
         """
-        return sum(i for i in range(n) if i % m == 0)
+        k = (n - 1) // m
+        return m * k * (k + 1) // 2
