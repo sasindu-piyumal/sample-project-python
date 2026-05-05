@@ -27,11 +27,9 @@ class DoubleForLoop:
         Returns:
             int: Sum of triangle of numbers from 0 to n
         """
-        sum_ = 0
-        for i in range(n):
-            for j in range(i + 1):
-                sum_ += j
-        return sum_
+        # Sum of first n-1 triangular numbers: T_0 + T_1 + ... + T_{n-1}
+        # Formula: (n-1) * n * (n+1) // 6
+        return (n - 1) * n * (n + 1) // 6
 
     @staticmethod
     def count_pairs(arr: List[int]) -> int:
@@ -64,12 +62,8 @@ class DoubleForLoop:
         Returns:
             int: Number of duplicates between the two arrays
         """
-        count = 0
-        for i in range(len(arr0)):
-            for j in range(len(arr1)):
-                if i == j and arr0[i] == arr1[j]:
-                    count += 1
-        return count
+        # Reduce O(N*M) complexity to O(min(N, M)) by checking only matching indices
+        return sum(1 for a, b in zip(arr0, arr1) if a == b)
 
     @staticmethod
     def sum_matrix(m: List[List[int]]) -> int:
@@ -81,8 +75,5 @@ class DoubleForLoop:
         Returns:
             int: Sum of matrix of integers
         """
-        sum_ = 0
-        for i in range(len(m)):
-            for j in range(len(m[i])):
-                sum_ += m[i][j]
-        return sum_
+        # Use built-in sum and map for faster iteration over rows
+        return sum(map(sum, m))
