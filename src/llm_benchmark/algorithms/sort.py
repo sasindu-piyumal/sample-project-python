@@ -11,10 +11,7 @@ class Sort:
         Args:
             v (List[int]): List of integers
         """
-        for i in range(len(v)):
-            for j in range(i + 1, len(v)):
-                if v[i] > v[j]:
-                    v[i], v[j] = v[j], v[i]
+        v.sort()
 
     @staticmethod
     def dutch_flag_partition(v: List[int], pivot_value: int) -> None:
