@@ -21,7 +21,5 @@ class StrOps:
         Returns:
             bool: True if the string is a palindrome, False otherwise
         """
-        for i in range(len(s)):
-            if s[i] != s[len(s) - 1 - i]:
-                return False
-        return True
+        # Use slice comparison which is more optimized in Python
+        return s == s[::-1]
