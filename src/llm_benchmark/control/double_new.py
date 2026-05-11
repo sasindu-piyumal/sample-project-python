@@ -83,4 +83,3 @@ class DoubleForLoop:
             int: Sum of matrix of integers
         """
         return sum(chain.from_iterable(m))
-        return sum_
