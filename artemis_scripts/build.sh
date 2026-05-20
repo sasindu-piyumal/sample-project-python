@@ -5,6 +5,6 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 source "$DIR/variables.sh"
 
 # Populate BUILD with the build command
-BUILD="poetry install"
+BUILD="poetry install --no-root --sync"
 echo "Running build command: $BUILD"
-eval $BUILD
+eval "$BUILD"
