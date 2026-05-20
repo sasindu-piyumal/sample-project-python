@@ -5,6 +5,6 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 source "$DIR/variables.sh"
 
 # Populate BENCHMARK with the benchmark command
-BENCHMARK="poetry run pytest --benchmark-only tests/"
+BENCHMARK="poetry run pytest --benchmark-only tests/ --benchmark-autosave --benchmark-sort=mean"
 echo "Running benchmark command: $BENCHMARK"
-eval $BENCHMARK
+exec $BENCHMARK
