@@ -1,4 +1,5 @@
 from typing import List
+from collections import Counter
 
 
 class DoubleForLoop:
@@ -47,16 +48,15 @@ class DoubleForLoop:
         Returns:
             int: Number of pairs in the array
         """
+        # Use Counter for O(n) frequency counting instead of O(n²) nested loops
+        frequency = Counter(arr)
         count = 0
-        for i in range(len(arr)):
-            ndup = 0
-            for j in range(len(arr)):
-                if arr[i] == arr[j]:
-                    ndup += 1
-            if ndup == 2:
+        for num, freq in frequency.items():
+            # For each value that appears exactly 2 times, count it as 1 pair
+            if freq == 2:
                 count += 1
-
-        return count // 2
+        
+        return count
 
     @staticmethod
     def count_duplicates(arr0: List[int], arr1: List[int]) -> int:

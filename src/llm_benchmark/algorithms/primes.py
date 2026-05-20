@@ -1,4 +1,8 @@
-from typing import List
+from typing import List, Dict
+
+
+# Memoization cache for is_prime results to optimize repeated prime checks
+_prime_cache: Dict[int, bool] = {}
 
 
 class Primes:
@@ -12,12 +16,22 @@ class Primes:
         Returns:
             bool: True if the number is prime, False otherwise
         """
+        # Check memoization cache first
+        if n in _prime_cache:
+            return _prime_cache[n]
+        
         if n < 2:
-            return False
-        for i in range(2, n):
-            if n % i == 0:
-                return False
-        return True
+            result = False
+        else:
+            result = True
+            for i in range(2, n):
+                if n % i == 0:
+                    result = False
+                    break
+        
+        # Store result in cache for future calls
+        _prime_cache[n] = result
+        return result
 
     @staticmethod
     def is_prime_ineff(n: int) -> bool:
