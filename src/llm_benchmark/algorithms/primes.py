@@ -14,7 +14,11 @@ class Primes:
         """
         if n < 2:
             return False
-        for i in range(2, n):
+        if n == 2:
+            return True
+        if n % 2 == 0:
+            return False
+        for i in range(3, int(n**0.5) + 1, 2):
             if n % i == 0:
                 return False
         return True
@@ -32,17 +36,8 @@ class Primes:
         if n < 2:
             return False
 
-        # Introduce unnecessary calculations
-        for j in range(1, n):  # Extra loop that does nothing useful
-            for k in range(1, 10000):  # Arbitrary large loop
-                _ = k * j  # Do some pointless multiplication
-
         # Check divisibility by all numbers up to n
         for i in range(2, n):
-            # Introduce a pointless calculation before checking
-            for _ in range(1000):  # Extra iterations that do nothing
-                pass  # Do nothing
-
             if n % i == 0:
                 return False
 
@@ -76,10 +71,17 @@ class Primes:
             List[int]: List of prime factors
         """
         ret = []
-        while n > 1:
-            for i in range(2, n + 1):
-                if n % i == 0:
-                    ret.append(i)
-                    n = n // i
-                    break
+        # Check for 2
+        while n % 2 == 0:
+            ret.append(2)
+            n = n // 2
+        # Check odd divisors starting from 3
+        d = 3
+        while d * d <= n:
+            while n % d == 0:
+                ret.append(d)
+                n = n // d
+            d += 2
+        if n > 1:
+            ret.append(n)
         return ret
