@@ -1,10 +1,17 @@
+import math
 from typing import List
 
 
 class Primes:
     @staticmethod
     def is_prime(n: int) -> bool:
-        """Check if a number is prime
+        """Check if a number is prime.
+
+        Uses trial division up to √n, handling 2 and odd numbers separately
+        so the hot loop only tests odd candidates — roughly half as many
+        divisions as a naïve 2-to-n scan.
+
+        Complexity: O(√n)   (was O(n))
 
         Args:
             n (int): Number to check
@@ -14,14 +21,48 @@ class Primes:
         """
         if n < 2:
             return False
-        for i in range(2, n):
+        if n == 2:
+            return True
+        if n % 2 == 0:
+            return False
+        # Only test odd divisors from 3 up to √n.
+        # math.isqrt is available from Python 3.8 and avoids floating-point
+        # rounding issues that can affect int(math.sqrt(n)).
+        limit = math.isqrt(n)
+        i = 3
+        while i <= limit:
             if n % i == 0:
                 return False
+            i += 2
         return True
 
     @staticmethod
     def is_prime_ineff(n: int) -> bool:
-        """Check if a number is prime (inefficiently)
+        """Check if a number is prime.
+
+        Formerly an intentionally slow implementation that executed
+        O(n × 10 000 + n × 1 000) wasted operations before even starting
+        the divisibility loop.  Replaced with the same O(√n) trial-division
+        algorithm used by :meth:`is_prime` so the two methods share a single
+        efficient code-path and callers need not be changed.
+
+        Optimisations applied
+        ─────────────────────
+        * Early-exit for n < 2 and for even n > 2.
+        * Trial divisors are restricted to odd numbers starting at 3,
+          halving the number of modulo operations.
+        * The loop ceiling is math.isqrt(n) (integer square root, O(1),
+          no floating-point error) instead of n, cutting the work from
+          O(n) to O(√n).
+        * math.isqrt is computed once outside the loop to avoid repeated
+          calls inside the hot path.
+
+        Hardware note: on x86-64 the integer modulo (%) maps to a single
+        IDIV instruction; keeping operands small (≤ √n) maximises the
+        chance that both dividend and divisor fit in CPU registers and
+        avoids expensive memory traffic for large n.
+
+        Complexity: O(√n)   (was O(n × 11 000))
 
         Args:
             n (int): Number to check
@@ -31,23 +72,17 @@ class Primes:
         """
         if n < 2:
             return False
-
-        # Introduce unnecessary calculations
-        for j in range(1, n):  # Extra loop that does nothing useful
-            for k in range(1, 10000):  # Arbitrary large loop
-                _ = k * j  # Do some pointless multiplication
-
-        # Check divisibility by all numbers up to n
-        for i in range(2, n):
-            # Introduce a pointless calculation before checking
-            for _ in range(1000):  # Extra iterations that do nothing
-                pass  # Do nothing
-
+        if n == 2:
+            return True
+        if n % 2 == 0:
+            return False
+        limit = math.isqrt(n)
+        i = 3
+        while i <= limit:
             if n % i == 0:
                 return False
-
+            i += 2
         return True
-
 
     @staticmethod
     def sum_primes(n: int) -> int:
@@ -67,7 +102,10 @@ class Primes:
 
     @staticmethod
     def prime_factors(n: int) -> List[int]:
-        """Prime factors of a number
+        """Prime factors of a number.
+
+        Divides out 2 first, then tests only odd candidates up to √n,
+        reducing the work from O(n) per call to O(√n).
 
         Args:
             n (int): Number to factorize
@@ -76,10 +114,17 @@ class Primes:
             List[int]: List of prime factors
         """
         ret = []
-        while n > 1:
-            for i in range(2, n + 1):
-                if n % i == 0:
-                    ret.append(i)
-                    n = n // i
-                    break
+        # Divide out all factors of 2 first.
+        while n > 1 and n % 2 == 0:
+            ret.append(2)
+            n //= 2
+        # Now n is odd; only odd divisors can remain.
+        i = 3
+        while i * i <= n:
+            while n % i == 0:
+                ret.append(i)
+                n //= i
+            i += 2
+        if n > 1:
+            ret.append(n)
         return ret
