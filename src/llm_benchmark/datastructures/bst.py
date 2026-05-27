@@ -74,34 +74,37 @@ class Tree:
         """
         if value < node.value:
             if node.left is None:
-                # Case 1: Creating new leaf node
                 node.left = Node(value)
-                return (0, 1)
+                if node.right is None:
+                    node.height = 1
+                    return (1, 1)
+                else:
+                    node.height = 1 + node.right.height
+                    return (node.height, 1)
             else:
-                # Case 3: Recursive insertion into left subtree
                 left_height, inserted = self._insert_recursive(node.left, value)
-                # Compute height: node_height = 1 + max(left_height, right_height)
-                # Handle edge case where right child is None (height = -1)
-                right_height = -1 if node.right is None else node.right.height
-                new_height = 1 + max(left_height, right_height)
-                node.height = new_height
-                return (new_height, inserted)
+                if inserted:
+                    node.left.height = left_height
+                    right_height = -1 if node.right is None else node.right.height
+                    node.height = 1 + max(left_height, right_height)
+                return (node.height, inserted)
         elif value > node.value:
             if node.right is None:
-                # Case 1: Creating new leaf node
                 node.right = Node(value)
-                return (0, 1)
+                if node.left is None:
+                    node.height = 1
+                    return (1, 1)
+                else:
+                    node.height = 1 + node.left.height
+                    return (node.height, 1)
             else:
-                # Case 3: Recursive insertion into right subtree
                 right_height, inserted = self._insert_recursive(node.right, value)
-                # Compute height: node_height = 1 + max(left_height, right_height)
-                # Handle edge case where left child is None (height = -1)
-                left_height = -1 if node.left is None else node.left.height
-                new_height = 1 + max(left_height, right_height)
-                node.height = new_height
-                return (new_height, inserted)
+                if inserted:
+                    node.right.height = right_height
+                    left_height = -1 if node.left is None else node.left.height
+                    node.height = 1 + max(left_height, right_height)
+                return (node.height, inserted)
         else:
-            # Case 2: Duplicate value - don't insert
             return (node.height, 0)
     
     @property
