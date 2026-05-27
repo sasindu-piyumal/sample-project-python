@@ -172,22 +172,23 @@ class Primes:
         if n <= 2:
             return 0
         
-        # Sieve of Eratosthenes: mark composite numbers
-        is_prime_arr = [True] * n
-        is_prime_arr[0] = is_prime_arr[1] = False
+        # Sieve of Eratosthenes: mark composite numbers using efficient bytearray slicing
+        is_prime_arr = bytearray(b'\x01') * n
+        is_prime_arr[0] = is_prime_arr[1] = 0
         
         # Only need to check up to sqrt(n)
         sqrt_n = int(n ** 0.5)
         for i in range(2, sqrt_n + 1):
             if is_prime_arr[i]:
-                # Mark all multiples of i starting from i^2 as composite
-                for j in range(i * i, n, i):
-                    is_prime_arr[j] = False
+                start = i * i
+                if start < n:
+                    count = (n - start - 1) // i + 1
+                    is_prime_arr[start:n:i] = b'\x00' * max(0, count)
         
         # Cache individual prime results for future use
         for i in range(n):
             if i not in _prime_cache:
-                _prime_cache[i] = is_prime_arr[i]
+                _prime_cache[i] = bool(is_prime_arr[i])
         
         # Sum all remaining prime numbers
         return sum(i for i in range(n) if is_prime_arr[i])
