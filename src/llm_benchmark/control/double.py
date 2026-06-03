@@ -66,12 +66,7 @@ class DoubleForLoop:
         Returns:
             int: Total count of elements that appear in both arrays (counted with multiplicity)
         """
-        if not arr0 or not arr1:
-            return 0
-        # Use Counters to compute multiset intersection size efficiently
-        c0 = Counter(arr0)
-        c1 = Counter(arr1)
-        return sum(min(c0[k], c1[k]) for k in c0.keys() & c1.keys())
+        return sum(a == b for a, b in zip(arr0, arr1))
 
     @staticmethod
     def sum_matrix(m: List[List[int]]) -> int:
