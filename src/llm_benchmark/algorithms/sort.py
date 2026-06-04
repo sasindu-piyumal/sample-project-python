@@ -44,3 +44,15 @@ class Sort:
             List[int]: List of maximum n values
         """
         return heapq.nlargest(n, v)
+
+    @staticmethod
+    def sum_matrix(m: List[List[int]]) -> int:
+        """Calculate the sum of all elements in a matrix.
+
+        Args:
+            m (List[List[int]]): The input matrix (list of lists of integers).
+
+        Returns:
+            int: The total sum of all elements.
+        """
+        return sum(map(sum, m))

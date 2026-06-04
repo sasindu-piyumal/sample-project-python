@@ -37,6 +37,18 @@ class SingleForLoop:
         return max(v)
 
     @staticmethod
+    def sum_matrix(m: List[List[int]]) -> int:
+        """Sums all elements in a matrix.
+
+        Args:
+            m (List[List[int]]): The input matrix (list of lists of integers).
+
+        Returns:
+            int: The sum of all elements in the matrix.
+        """
+        return sum(map(sum, m))
+
+    @staticmethod
     def sum_modulus(n: int, m: int) -> int:
         """Sum of multiples of m that are less than n.
 

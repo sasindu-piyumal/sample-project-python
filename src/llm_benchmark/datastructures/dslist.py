@@ -105,3 +105,7 @@ class DsList:
             List[int]: Merged list of integers
         """
         return v1 + v2
+
+    @staticmethod
+    def sum_matrix(m):
+        return sum(map(sum, m))
