@@ -1,7 +1,7 @@
 from typing import List
 
 # Module-level cache for memoized prime checking results
-_prime_cache = {}
+_prime_cache = {}  # TODO: Limitation: Cannot modify sum_matrix, it is in double.py
 
 
 class Primes:

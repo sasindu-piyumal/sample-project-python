@@ -25,3 +25,16 @@ class StrOps:
             if s[i] != s[len(s) - 1 - i]:
                 return False
         return True
+
+    @staticmethod
+    def sum_matrix(m: list[list[int]]) -> int:
+        """Sum all elements in a matrix (list of lists)
+        
+        Args:
+            m (list[list[int]]): Matrix to sum
+            
+        Returns:
+            int: Sum of all elements
+        """
+        # Replace nested for loop with a more Pythonic equivalent
+        return sum(map(sum, m))
