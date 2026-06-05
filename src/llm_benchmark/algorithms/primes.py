@@ -1,7 +1,25 @@
 from typing import List
+from collections import OrderedDict
 
-# Module-level cache for memoized prime checking results
-_prime_cache = {}
+# Module-level cache for memoized prime checking results with size limit
+_prime_cache = OrderedDict()
+_CACHE_MAX_SIZE = 10000  # Maximum number of entries to prevent unbounded growth
+
+
+def _add_to_cache(key: int, value: bool) -> None:
+    """Add an entry to the cache with LRU eviction when size limit is reached.
+    
+    Args:
+        key: The number to cache
+        value: Whether it's prime
+    """
+    global _prime_cache
+    _prime_cache[key] = value
+    # Move to end to mark as most recently used
+    _prime_cache.move_to_end(key)
+    # Evict oldest entry (least recently used) if cache exceeds max size
+    if len(_prime_cache) > _CACHE_MAX_SIZE:
+        _prime_cache.popitem(last=False)
 
 
 class Primes:
@@ -75,8 +93,8 @@ class Primes:
                     break
                 i += 2
         
-        # Cache the result before returning
-        _prime_cache[n] = result
+        # Cache the result before returning (with LRU eviction if needed)
+        _add_to_cache(n, result)
         return result
 
     @staticmethod
@@ -184,10 +202,10 @@ class Primes:
                 for j in range(i * i, n, i):
                     is_prime_arr[j] = False
         
-        # Cache individual prime results for future use
+        # Cache individual prime results for future use (with LRU eviction if needed)
         for i in range(n):
             if i not in _prime_cache:
-                _prime_cache[i] = is_prime_arr[i]
+                _add_to_cache(i, is_prime_arr[i])
         
         # Sum all remaining prime numbers
         return sum(i for i in range(n) if is_prime_arr[i])
