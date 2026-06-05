@@ -1,7 +1,26 @@
 from typing import List
+from functools import lru_cache
 
 # Module-level cache for memoized prime checking results
 _prime_cache = {}
+
+# Create an LRU cache wrapper for bounded memory usage
+@lru_cache(maxsize=10000)
+def _lru_is_prime_cached(n: int) -> bool:
+    """LRU-cached prime check to limit memory usage."""
+    if n < 2:
+        return False
+    elif n == 2:
+        return True
+    elif n % 2 == 0:
+        return False
+    else:
+        i = 3
+        while i * i <= n:
+            if n % i == 0:
+                return False
+            i += 2
+    return True
 
 
 class Primes:
@@ -38,8 +57,8 @@ class Primes:
         """Check if a number is prime using trial division with caching.
 
         Uses an optimized O(sqrt(n)) algorithm that checks divisibility only by
-        2 and odd numbers up to the square root of n. Results are cached to 
-        eliminate redundant calculations for repeated primality checks.
+        2 and odd numbers up to the square root of n. Results are cached with
+        an LRU strategy to limit memory usage while maintaining performance.
 
         Args:
             n: The number to check for primality.
@@ -55,29 +74,8 @@ class Primes:
             >>> Primes.is_prime(4)
             False
         """
-        # Check cache first for O(1) lookup
-        if n in _prime_cache:
-            return _prime_cache[n]
-        
-        if n < 2:
-            result = False
-        elif n == 2:
-            result = True
-        elif n % 2 == 0:
-            result = False
-        else:
-            # Check odd divisors up to sqrt(n)
-            result = True
-            i = 3
-            while i * i <= n:
-                if n % i == 0:
-                    result = False
-                    break
-                i += 2
-        
-        # Cache the result before returning
-        _prime_cache[n] = result
-        return result
+        # Use LRU cache with bounded size (maxsize=10000)
+        return _lru_is_prime_cached(n)
 
     @staticmethod
     def is_prime_ineff(n: int) -> bool:
