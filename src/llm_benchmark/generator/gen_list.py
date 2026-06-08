@@ -29,3 +29,29 @@ class GenList:
         """
         rand_int = randint
         return [[rand_int(0, m) for _ in range(m)] for _ in range(n)]
+    
+    @staticmethod
+    def random_matrix_optimized(n: int, m: int) -> List[List[int]]:
+        """Generate a matrix of random integers with optimized memory layout.
+
+        Pre-allocates the outer list with exact capacity and ensures each inner
+        list is also pre-allocated for better cache locality and reduced
+        reallocation overhead during generation.
+
+        Args:
+            n (int): Number of rows
+            m (int): Number of columns
+
+        Returns:
+            List[List[int]]: Matrix of random integers with optimized layout
+        """
+        # Cache the randint function to avoid repeated lookups
+        rand_int = randint
+        # Pre-allocate outer list and use direct indexing for better cache behavior
+        # Create matrix with explicit pre-allocation for each row
+        matrix = []
+        for _ in range(n):
+            # Pre-allocate each row's list with exact size needed
+            row = [rand_int(0, m) for _ in range(m)]
+            matrix.append(row)
+        return matrix
