@@ -63,17 +63,21 @@ class Primes:
             result = False
         elif n == 2:
             result = True
-        elif n % 2 == 0:
+        elif (n & 1) == 0:
+            # Use bitwise AND for better branch prediction
             result = False
         else:
             # Check odd divisors up to sqrt(n)
             result = True
             i = 3
-            while i * i <= n:
+            # Cache i_squared to avoid recalculation
+            i_squared = 9
+            while i_squared <= n:
                 if n % i == 0:
                     result = False
                     break
                 i += 2
+                i_squared = i * i
         
         # Cache the result before returning
         _prime_cache[n] = result
@@ -219,18 +223,22 @@ class Primes:
         
         factors = []
         
-        # Extract all factors of 2
-        while n % 2 == 0:
+        # Extract all factors of 2 - optimize with bitwise operation for branch prediction
+        while (n & 1) == 0:
             factors.append(2)
-            n //= 2
+            n >>= 1
         
         # Check odd divisors starting from 3 up to sqrt(n)
+        # Cache the limit to avoid recalculating i*i each iteration
         i = 3
-        while i * i <= n:
+        i_squared = 9
+        
+        while i_squared <= n:
             while n % i == 0:
                 factors.append(i)
                 n //= i
             i += 2
+            i_squared = i * i
         
         # If n > 1 after division, it's a prime factor itself
         if n > 1:
