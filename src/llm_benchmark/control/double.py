@@ -81,8 +81,5 @@ class DoubleForLoop:
         Returns:
             int: Sum of matrix of integers
         """
-        sum_ = 0
-        for row in m:
-            for val in row:
-                sum_ += val
+        return sum(map(sum, m))
         return sum_
