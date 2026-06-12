@@ -1,6 +1,11 @@
 import sqlite3
 from textwrap import dedent
 
+# Module-level cached connection — opened once, reused across all calls.
+# Using check_same_thread=False is safe here because the benchmark workload
+# is single-threaded read-only access to the Chinook database.
+_conn = sqlite3.connect("data/chinook.db", check_same_thread=False)
+
 
 class SqlQuery:
     @staticmethod
@@ -13,14 +18,12 @@ class SqlQuery:
         Returns:
             bool: True if the album exists, False otherwise
         """
-        with sqlite3.connect("data/chinook.db") as conn:
-            cur = conn.cursor()
-
-            cur.execute(
-                "SELECT 1 FROM Album WHERE Title = ? LIMIT 1",
-                (name,),
-            )
-            return cur.fetchone() is not None
+        cur = _conn.cursor()
+        cur.execute(
+            "SELECT 1 FROM Album WHERE Title = ? LIMIT 1",
+            (name,),
+        )
+        return cur.fetchone() is not None
 
     @staticmethod
     def join_albums() -> list:
@@ -29,24 +32,22 @@ class SqlQuery:
         Returns:
             list:
         """
-        with sqlite3.connect("data/chinook.db") as conn:
-            cur = conn.cursor()
-
-            cur.execute(
-                dedent(
-                    """\
-                    SELECT 
-                        t.Name AS TrackName,
-                        a.Title AS AlbumName,
-                        ar.Name AS ArtistName
-                    FROM 
-                        Track t
-                    JOIN Album a ON a.AlbumId = t.AlbumId
-                    JOIN Artist ar ON ar.ArtistId = a.ArtistId
-                    """
-                )
+        cur = _conn.cursor()
+        cur.execute(
+            dedent(
+                """\
+                SELECT 
+                    t.Name AS TrackName,
+                    a.Title AS AlbumName,
+                    ar.Name AS ArtistName
+                FROM 
+                    Track t
+                JOIN Album a ON a.AlbumId = t.AlbumId
+                JOIN Artist ar ON ar.ArtistId = a.ArtistId
+                """
             )
-            return cur.fetchall()
+        )
+        return cur.fetchall()
 
     @staticmethod
     def top_invoices() -> list:
@@ -55,22 +56,20 @@ class SqlQuery:
         Returns:
             list: List of tuples
         """
-        with sqlite3.connect("data/chinook.db") as conn:
-            cur = conn.cursor()
-
-            cur.execute(
-                dedent(
-                    """\
-                    SELECT 
-                        i.InvoiceId, 
-                        c.FirstName || ' ' || c.LastName AS CustomerName, 
-                        i.Total
-                    FROM 
-                        Invoice i
-                    JOIN Customer c ON c.CustomerId = i.CustomerId
-                    ORDER BY i.Total DESC
-                    LIMIT 10
-                    """
-                )
+        cur = _conn.cursor()
+        cur.execute(
+            dedent(
+                """\
+                SELECT 
+                    i.InvoiceId, 
+                    c.FirstName || ' ' || c.LastName AS CustomerName, 
+                    i.Total
+                FROM 
+                    Invoice i
+                JOIN Customer c ON c.CustomerId = i.CustomerId
+                ORDER BY i.Total DESC
+                LIMIT 10
+                """
             )
-            return cur.fetchall()
+        )
+        return cur.fetchall()
