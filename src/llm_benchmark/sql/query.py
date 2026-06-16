@@ -1,5 +1,8 @@
 import sqlite3
+from pathlib import Path
 from textwrap import dedent
+
+_DB_PATH = Path(__file__).resolve().parents[3] / "data" / "chinook.db"
 
 
 class SqlQuery:
