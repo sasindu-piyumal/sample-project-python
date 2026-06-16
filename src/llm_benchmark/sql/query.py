@@ -58,7 +58,7 @@ class SqlQuery:
         Returns:
             list: List of tuples
         """
-        with sqlite3.connect("data/chinook.db") as conn:
+        with sqlite3.connect(_DB_PATH) as conn:
             cur = conn.cursor()
 
             cur.execute(
