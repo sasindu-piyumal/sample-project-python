@@ -38,7 +38,7 @@ class SingleForLoop:
 
     @staticmethod
     def sum_modulus(n: int, m: int) -> int:
-        """Sum of modulus i % m for i in the inclusive range 0..n.
+        """Sum of all multiples of m that are less than n.
 
         Args:
             n (int): Number to sum up to (inclusive)
@@ -50,4 +50,4 @@ class SingleForLoop:
         Raises:
             ZeroDivisionError: If m == 0
         """
-        return sum(i % m for i in range(n + 1))
+        return sum(range(0, n, m))
