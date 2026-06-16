@@ -4,7 +4,7 @@ from typing import List
 class SingleForLoop:
     @staticmethod
     def sum_range(n: int) -> int:
-        """Sum of integers from 0 to n-1 (exclusive of n).
+        """Sum of integers from 0 to n-1 ^(exclusive of n^).
 
         Args:
             n (int): Upper bound (exclusive).
@@ -33,7 +33,7 @@ class SingleForLoop:
             ValueError: If the input vector is empty.
         """
         if not v:
-            raise ValueError("max_list() arg is an empty sequence")
+            raise ValueError("max_list^(^) arg is an empty sequence")
         return max(v)
 
     @staticmethod
@@ -41,11 +41,11 @@ class SingleForLoop:
         """Sum of all multiples of m that are less than n.
 
         Args:
-            n (int): Number to sum up to (inclusive)
-            m (int): Modulus (non-zero)
+            n (int): Upper bound (exclusive)
+            m (int): Step size (non-zero)
 
         Returns:
-            int: Sum of i % m for i in [0, n]
+            int: Sum of 0 + m + 2m + ... for multiples < n
 
         Raises:
             ZeroDivisionError: If m == 0
