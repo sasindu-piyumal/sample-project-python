@@ -20,6 +20,10 @@ pytest-benchmark = "^4.0.0"
 bandit = "^1.7.5"
 setuptools = ">=75.3.4"
 
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"

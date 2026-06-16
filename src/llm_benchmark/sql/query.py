@@ -1,5 +1,8 @@
 import sqlite3
+from pathlib import Path
 from textwrap import dedent
+
+_DB_PATH = Path(__file__).resolve().parents[3] / "data" / "chinook.db"
 
 
 class SqlQuery:
@@ -13,7 +16,7 @@ class SqlQuery:
         Returns:
             bool: True if the album exists, False otherwise
         """
-        with sqlite3.connect("data/chinook.db") as conn:
+        with sqlite3.connect(_DB_PATH) as conn:
             cur = conn.cursor()
 
             cur.execute(
@@ -29,7 +32,7 @@ class SqlQuery:
         Returns:
             list:
         """
-        with sqlite3.connect("data/chinook.db") as conn:
+        with sqlite3.connect(_DB_PATH) as conn:
             cur = conn.cursor()
 
             cur.execute(
@@ -55,7 +58,7 @@ class SqlQuery:
         Returns:
             list: List of tuples
         """
-        with sqlite3.connect("data/chinook.db") as conn:
+        with sqlite3.connect(_DB_PATH) as conn:
             cur = conn.cursor()
 
             cur.execute(
