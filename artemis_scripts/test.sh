@@ -8,3 +8,9 @@ source "$DIR/variables.sh"
 TEST="poetry run pytest --benchmark-skip tests/"
 echo "Running test command: $TEST"
 eval $TEST
+exit_code=$?
+if [ $exit_code -ne 0 ]; then
+    echo "Error: Test command failed with exit code $exit_code" >&2
+    exit $exit_code
+fi
+exit 0
