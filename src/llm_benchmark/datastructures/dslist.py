@@ -91,6 +91,10 @@ class DsList:
         Returns:
             List[int]: Merged list of integers
         """
+        if v1 is None:
+            raise ValueError("v1 must not be None")
+        if v2 is None:
+            raise ValueError("v2 must not be None")
         ret = []
         for i in range(len(v1)):
             ret.append(v1[i])
