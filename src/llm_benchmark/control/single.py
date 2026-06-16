@@ -17,7 +17,7 @@ class SingleForLoop:
         """
         if n < 0:
             raise ValueError("n must be non-negative")
-        return n * (n - 1) // 2
+        return n * (n + 1) // 2
 
     @staticmethod
     def max_list(v: List[int]) -> int:
