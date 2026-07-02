@@ -37,30 +37,28 @@ class SqlQuery:
         Returns:
             list:
         """
-        conn = sqlite3.connect("data/chinook.db")
-        cur = conn.cursor()
-
-        cur.execute(
-            dedent(
-                """\
-                SELECT 
-                    t.Name AS TrackName, (
-                        SELECT a2.Title 
-                        FROM Album a2 
-                        WHERE a2.AlbumId = t.AlbumId
-                    ) AS AlbumName, 
-                    (
-                        SELECT ar.Name 
-                        FROM Artist ar
-                        JOIN Album a3 ON a3.ArtistId = ar.ArtistId
-                        WHERE a3.AlbumId = t.AlbumId
-                    ) AS ArtistName
-                FROM 
-                    Track t
-                """
+        with _connect() as cur:
+            cur.execute(
+                dedent(
+                    """\
+                    SELECT 
+                        t.Name AS TrackName, (
+                            SELECT a2.Title 
+                            FROM Album a2 
+                            WHERE a2.AlbumId = t.AlbumId
+                        ) AS AlbumName, 
+                        (
+                            SELECT ar.Name 
+                            FROM Artist ar
+                            JOIN Album a3 ON a3.ArtistId = ar.ArtistId
+                            WHERE a3.AlbumId = t.AlbumId
+                        ) AS ArtistName
+                    FROM 
+                        Track t
+                    """
+                )
             )
-        )
-        return cur.fetchall()
+            return cur.fetchall()
 
     @staticmethod
     def top_invoices() -> list:
