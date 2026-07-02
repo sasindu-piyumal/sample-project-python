@@ -26,11 +26,9 @@ class SqlQuery:
         Returns:
             bool: True if the album exists, False otherwise
         """
-        conn = sqlite3.connect("data/chinook.db")
-        cur = conn.cursor()
-
-        cur.execute(f"SELECT * FROM Album WHERE Title = '{name}'")
-        return len(cur.fetchall()) > 0
+        with _connect() as cur:
+            cur.execute("SELECT * FROM Album WHERE Title = ?", (name,))
+            return len(cur.fetchall()) > 0
 
     @staticmethod
     def join_albums() -> list:
