@@ -67,21 +67,19 @@ class SqlQuery:
         Returns:
             list: List of tuples
         """
-        conn = sqlite3.connect("data/chinook.db")
-        cur = conn.cursor()
-
-        cur.execute(
-            dedent(
-                """\
-                SELECT 
-                    i.InvoiceId, 
-                    c.FirstName || ' ' || c.LastName AS CustomerName, 
-                    i.Total
-                FROM 
-                    Invoice i
-                JOIN Customer c ON c.CustomerId = i.CustomerId
-                ORDER BY i.Total DESC
-                """
+        with _connect() as cur:
+            cur.execute(
+                dedent(
+                    """\
+                    SELECT 
+                        i.InvoiceId, 
+                        c.FirstName || ' ' || c.LastName AS CustomerName, 
+                        i.Total
+                    FROM 
+                        Invoice i
+                    JOIN Customer c ON c.CustomerId = i.CustomerId
+                    ORDER BY i.Total DESC
+                    """
+                )
             )
-        )
-        return cur.fetchall()[:10]
+            return cur.fetchall()[:10]
