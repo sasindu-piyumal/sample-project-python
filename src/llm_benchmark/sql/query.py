@@ -1,5 +1,18 @@
+from contextlib import contextmanager
 import sqlite3
 from textwrap import dedent
+
+
+_DB_PATH = "data/chinook.db"
+
+
+@contextmanager
+def _connect():
+    conn = sqlite3.connect(_DB_PATH)
+    try:
+        yield conn.cursor()
+    finally:
+        conn.close()
 
 
 class SqlQuery:
