@@ -27,4 +27,4 @@ class GenList:
         Returns:
             List[List[int]]: Matrix of random integers
         """
-        return [GenList.random_list(n, m) for _ in range(n)]
+        return [[randint(0, m) for _ in range(m)] for _ in range(n)]
