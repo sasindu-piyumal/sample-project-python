@@ -9,10 +9,7 @@ class StrOps:
         Returns:
             str: Reversed string
         """
-        ret = ""
-        for i in range(len(s)):
-            ret += s[len(s) - 1 - i]
-        return ret
+        return s[::-1]
 
     @staticmethod
     def palindrome(s: str) -> bool:
@@ -24,7 +21,9 @@ class StrOps:
         Returns:
             bool: True if the string is a palindrome, False otherwise
         """
-        for i in range(len(s)):
+        for i in range(len(s) // 2):
             if s[i] != s[len(s) - 1 - i]:
+                return False
+        return True
                 return False
         return True
