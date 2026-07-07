@@ -1,5 +1,3 @@
-from typing import List
-
 import pytest
 
 from llm_benchmark.control.single import SingleForLoop
@@ -18,7 +16,7 @@ def test_benchmark_sum_range(benchmark) -> None:
     "v, M",
     [([0], 0), ([1, 2, 3, 4, 5], 5), ([1, 1, 1, 1, 0], 1), ([-1, -1, -1, -1, 0], 0)],
 )
-def test_max_list(v: List[int], M: int) -> None:
+def test_max_list(v: list[int], M: int) -> None:
     assert SingleForLoop.max_list(v) == M
 
 
