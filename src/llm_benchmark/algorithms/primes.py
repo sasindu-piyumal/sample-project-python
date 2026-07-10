@@ -145,13 +145,16 @@ class Primes:
         Returns:
             List[int]: List of prime factors
         """
+        if n < 2:
+            return []
+
         ret = []
-        
+
         # Handle factor 2
         while n % 2 == 0:
             ret.append(2)
             n = n // 2
-        
+
         # Check odd divisors up to sqrt(n)
         i = 3
         while i * i <= n:
@@ -159,9 +162,9 @@ class Primes:
                 ret.append(i)
                 n = n // i
             i += 2
-        
+
         # If n > 1, then it's a prime factor
         if n > 1:
             ret.append(n)
-        
+
         return ret
