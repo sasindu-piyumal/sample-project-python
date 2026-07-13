@@ -43,11 +43,24 @@ class Sort:
             n (int): Number of maximum values to find
 
         Returns:
-            List[int]: List of maximum n values
+            List[int]: List of maximum n values. If n == 0, returns [].
+
+        Raises:
+            ValueError: If v is empty, if n is negative, or if n > len(v)
         """
+        if n < 0:
+            raise ValueError("n must be non-negative")
+        if n == 0:
+            return []
+        if not v:
+            raise ValueError("v must be non-empty")
+        if n > len(v):
+            raise ValueError("n cannot be greater than len(v)")
+
         tmp = v.copy()
         ret = [-maxsize - 1] * n
         for i in range(n):
+            # tmp is non-empty because we validated n <= len(v) and n > 0
             max_val = tmp[0]
             max_idx = 0
             for j in range(1, len(tmp)):
