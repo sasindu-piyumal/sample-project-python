@@ -79,6 +79,10 @@ class DsList:
         Returns:
             List[int]: Rotated list of integers
         """
+        if not v:
+            return []
+
+        n %= len(v)
         ret = []
         for i in range(n, len(v)):
             ret.append(v[i])
