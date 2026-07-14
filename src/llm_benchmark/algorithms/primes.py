@@ -248,15 +248,3 @@ class Primes:
             factors.append(n)
         
         return factors
-        return factors
-                n //= i
-            while n % (i + 2) == 0:
-                factors.append(i + 2)
-                n //= (i + 2)
-            i += 6
-        
-        # If n > 1 after division, it's a prime factor itself
-        if n > 1:
-            factors.append(n)
-        
-        return factors
