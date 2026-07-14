@@ -7,7 +7,7 @@ readme = "README.md"
 packages = [{include = "llm_benchmark", from = "src"}]
 
 [tool.poetry.scripts]
-main = "main:main"
+main = "llm_benchmark.main:main"
 
 [tool.poetry.dependencies]
 python = "^3.8"
