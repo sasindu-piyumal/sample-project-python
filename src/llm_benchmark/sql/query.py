@@ -29,7 +29,7 @@ class SqlQuery:
         Returns:
             bool: True if the album exists, False otherwise
         """
-        cur = _conn.cursor()
+        cur = _get_conn().cursor()
         cur.execute(
             "SELECT 1 FROM Album WHERE Title = ? LIMIT 1",
             (name,),
@@ -43,7 +43,7 @@ class SqlQuery:
         Returns:
             list:
         """
-        cur = _conn.cursor()
+        cur = _get_conn().cursor()
         cur.execute(
             dedent(
                 """\
@@ -67,7 +67,7 @@ class SqlQuery:
         Returns:
             list: List of tuples
         """
-        cur = _conn.cursor()
+        cur = _get_conn().cursor()
         cur.execute(
             dedent(
                 """\
