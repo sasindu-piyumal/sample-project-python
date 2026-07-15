@@ -2,14 +2,20 @@ import sqlite3
 from pathlib import Path
 from textwrap import dedent
 
-# Module-level cached connection — opened once, reused across all calls.
+# Module-level cached connection — opened lazily once, reused across all calls.
 # Using check_same_thread=False is safe here because the benchmark workload
 # is single-threaded read-only access to the Chinook database.
 DB_PATH = Path(__file__).resolve().parents[3] / "data" / "chinook.db"
-if not DB_PATH.exists():
-    raise FileNotFoundError(f"Missing required SQLite database: {DB_PATH}")
+_conn = None
 
-_conn = sqlite3.connect(DB_PATH, check_same_thread=False)
+
+def _get_conn():
+    global _conn
+    if _conn is None:
+        if not DB_PATH.exists():
+            raise FileNotFoundError(f"Missing required SQLite database: {DB_PATH}")
+        _conn = sqlite3.connect(DB_PATH, check_same_thread=False)
+    return _conn
 
 
 class SqlQuery:
@@ -23,7 +29,7 @@ class SqlQuery:
         Returns:
             bool: True if the album exists, False otherwise
         """
-        cur = _conn.cursor()
+        cur = _get_conn().cursor()
         cur.execute(
             "SELECT 1 FROM Album WHERE Title = ? LIMIT 1",
             (name,),
@@ -37,7 +43,7 @@ class SqlQuery:
         Returns:
             list:
         """
-        cur = _conn.cursor()
+        cur = _get_conn().cursor()
         cur.execute(
             dedent(
                 """\
@@ -61,7 +67,7 @@ class SqlQuery:
         Returns:
             list: List of tuples
         """
-        cur = _conn.cursor()
+        cur = _get_conn().cursor()
         cur.execute(
             dedent(
                 """\
