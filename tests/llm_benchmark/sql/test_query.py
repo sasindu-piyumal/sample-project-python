@@ -1,6 +1,27 @@
+import sqlite3
+
 import pytest
 
-from llm_benchmark.sql.query import SqlQuery
+from llm_benchmark.sql.query import DB_PATH, SqlQuery
+
+
+def _has_chinook_db() -> bool:
+    if not DB_PATH.exists():
+        return False
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        try:
+            conn.execute("SELECT 1 FROM Album LIMIT 1")
+        finally:
+            conn.close()
+    except sqlite3.Error:
+        return False
+    return True
+
+
+pytestmark = pytest.mark.skipif(
+    not _has_chinook_db(), reason=f"Missing required SQLite database: {DB_PATH}"
+)
 
 
 @pytest.mark.parametrize(
