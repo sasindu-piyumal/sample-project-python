@@ -67,7 +67,7 @@ class DoubleForLoop:
         count = 0
         for i in range(len(arr0)):
             for j in range(len(arr1)):
-                if i == j and arr0[i] == arr1[j]:
+                if arr0[i] == arr1[j]:
                     count += 1
         return count
 
