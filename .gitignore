@@ -1,0 +1,36 @@
+# Python caches and test artifacts
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+*.cover
+
+# Benchmark artifacts
+.benchmarks/
+benchmark-results/
+
+# Local environments
+.venv/
+venv/
+env/
+ENV/
+*.env
+
+# Editor and runtime logs
+.vscode/
+.idea/
+*.log
+*.pid
+
+# Build and distribution outputs
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Security scan reports
+bandit-results.json
+pip-audit-results.json
