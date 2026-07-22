@@ -19,6 +19,7 @@ pytest = "^7.4.3"
 pytest-benchmark = "^4.0.0"
 bandit = "^1.7.5"
 setuptools = ">=75.3.4"
+pip-audit = "^2.9.0"
 
 [tool.pytest.ini_options]
 pythonpath = ["src"]
