@@ -14,7 +14,10 @@ class GenList:
         Returns:
             List[int]: List of random integers
         """
-        return [randint(0, m) for _ in range(n)]
+        if m <= 0:
+            raise ValueError("m must be greater than 0")
+
+        return [randrange(m) for _ in range(n)]
 
     @staticmethod
     def random_matrix(n: int, m: int) -> List[List[int]]:
