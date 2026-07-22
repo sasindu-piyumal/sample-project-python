@@ -252,6 +252,24 @@ test = ["appdirs (==1.4.4)", "covdefaults (>=2.3)", "pytest (>=8.3.2)", "pytest-
 type = ["mypy (>=1.11.2)"]
 
 [[package]]
+name = "pip-audit"
+version = "2.9.0"
+description = "Audits Python environments for dependencies with known vulnerabilities"
+optional = false
+python-versions = ">=3.8"
+groups = ["dev"]
+files = [
+    {file = "pip_audit-2.9.0-py3-none-any.whl", hash = "sha256:placeholder"},
+    {file = "pip_audit-2.9.0.tar.gz", hash = "sha256:placeholder"},
+]
+
+[package.dependencies]
+CacheControl = ">=0.13.0"
+pip = ">=22.2"
+rich = ">=12.4.4"
+tomli = {version = ">=1.1.0", markers = "python_version < \"3.11\""}
+
+[[package]]
 name = "pluggy"
 version = "1.5.0"
 description = "plugin and hook calling mechanisms for python"
@@ -545,4 +563,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.8"
-content-hash = "d41a94085efe995d405f3fd7a5f2cf4408c8a60d94a32f646442232aa8b3822c"
+content-hash = "b1b30c9b3bb5d59e8d2e26c19a53fa50c72a9317ad2c3e95aa5c5a4b8a2f2b31"
