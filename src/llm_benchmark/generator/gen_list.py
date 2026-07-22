@@ -1,4 +1,4 @@
-from random import randint
+from random import randrange
 from typing import List
 
 
