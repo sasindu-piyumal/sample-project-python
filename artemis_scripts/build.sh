@@ -4,7 +4,5 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 source "$DIR/variables.sh"
 
-# Populate BUILD with the build command
-BUILD="poetry lock && poetry install"
-echo "Running build command: $BUILD"
-eval $BUILD
+echo "Running build command: poetry lock && poetry install"
+poetry lock && poetry install
