@@ -84,23 +84,10 @@ class Primes:
 
     @staticmethod
     def is_prime_ineff(n: int) -> bool:
-        """Deliberately inefficient prime check for benchmarking and education.
+        """Check primality using a deliberately simple linear divisor scan.
 
-        **WARNING: NOT FOR PRODUCTION USE**
-
-        This method intentionally uses O(n^2) time complexity through wasteful
-        nested loops and redundant calculations. It serves as a baseline for
-        performance comparisons against the optimized is_prime() method.
-
-        **Use cases:**
-        - Performance benchmarking vs optimized algorithms
-        - Educational demonstrations of anti-patterns
-        - Showing the impact of inefficient implementations
-
-        **Deliberate inefficiencies:**
-        1. Nested loops performing O(n * 10000) pointless multiplications
-        2. Linear divisibility check O(n) instead of O(sqrt(n))
-        3. Busy-wait loop adding O(1000) overhead per divisibility check
+        This serves as a comparison baseline for :meth:`is_prime`, which stops
+        at the square root and skips divisors that are multiples of 2 or 3.
 
         Args:
             n: The number to check for primality.
@@ -109,43 +96,13 @@ class Primes:
             True if the number is prime, False otherwise.
 
         Time Complexity:
-            O(n^2) - Dominated by nested wasteful loops. The actual primality
-            test is buried under layers of unnecessary computation.
-
-        Examples:
-            >>> Primes.is_prime_ineff(2)
-            True
-            >>> Primes.is_prime_ineff(4)
-            False
+            O(n), because every possible divisor from 2 through n - 1 is
+            considered for prime inputs.
         """
         if n < 2:
             return False
 
-        # INEFFICIENCY #1: Nested loops with pointless calculations O(n * 10000)
-        # Wastes CPU cycles on multiplications unrelated to primality testing.
-        # AVOIDED: Skipping this entirely (as done in is_prime).
-        for j in range(1, n):
-            for k in range(1, 10000):
-                _ = k * j  # Arbitrary multiplication with no purpose
-
-        # INEFFICIENCY #2: Linear divisibility check O(n) instead of O(sqrt(n))
-        # Checks ALL divisors from 2 to n-1 instead of stopping at sqrt(n).
-        # 
-        # Comparison to is_prime():
-        # - Optimized: "i * i <= n" stops at sqrt(n) → O(sqrt(n))
-        # - Inefficient: "range(2, n)" checks all → O(n)
-        # 
-        # For n=100: optimized checks ~10 divisors, this checks 98 divisors.
-        # AVOIDED: Using "i * i <= n" termination condition.
         for i in range(2, n):
-            # INEFFICIENCY #3: Busy-wait loop O(1000) before each check
-            # Wastes 1000 iterations doing nothing, multiplying the O(n)
-            # divisibility checks by O(1000), pushing toward O(n^2).
-            # AVOIDED: Immediate divisibility checking without delays.
-            for _ in range(1000):
-                pass  # Pure time waste
-
-            # The ONLY useful operation: actual primality test
             if n % i == 0:
                 return False
 
