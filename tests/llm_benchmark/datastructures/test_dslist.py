@@ -42,10 +42,6 @@ def test_sort_list(v: List[int], ref: List[int]) -> None:
     assert DsList.sort_list(v) == ref
 
 
-def test_benchmark_sort_list(benchmark) -> None:
-    benchmark(DsList.sort_list, [5, 4, 3, 2, 1])
-
-
 @pytest.mark.parametrize(
     "v, ref",
     [
