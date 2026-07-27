@@ -67,5 +67,15 @@ def test_rotate_list(v: List[int], n: int, ref: List[int]) -> None:
     assert DsList.rotate_list(v, n) == ref
 
 
-def test_benchmark_rotate_list(benchmark) -> None:
-    benchmark(DsList.rotate_list, [1, 2, 3, 4, 5], 2)
+@pytest.mark.parametrize(
+    "func, args",
+    [
+        pytest.param(DsList.modify_list, ([1, 2, 3, 4, 5],), id="modify_list"),
+        pytest.param(DsList.search_list, ([1, 2, 3, 4, 5], 2), id="search_list"),
+        pytest.param(DsList.sort_list, ([5, 4, 3, 2, 1],), id="sort_list"),
+        pytest.param(DsList.reverse_list, ([1, 2, 3, 4, 5],), id="reverse_list"),
+        pytest.param(DsList.rotate_list, ([1, 2, 3, 4, 5], 2), id="rotate_list"),
+    ],
+)
+def test_benchmark_dslist(benchmark, func, args) -> None:
+    benchmark(func, *args)
