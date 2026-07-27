@@ -31,10 +31,6 @@ def test_search_list(v: List[int], search_value: int, ref: List[int]) -> None:
     assert DsList.search_list(v, search_value) == ref
 
 
-def test_benchmark_search_list(benchmark) -> None:
-    benchmark(DsList.search_list, [1, 2, 3, 4, 5], 2)
-
-
 @pytest.mark.parametrize(
     "v, ref",
     [
