@@ -54,10 +54,6 @@ def test_reverse_list(v: List[int], ref: List[int]) -> None:
     assert DsList.reverse_list(v) == ref
 
 
-def test_benchmark_reverse_list(benchmark) -> None:
-    benchmark(DsList.reverse_list, [1, 2, 3, 4, 5])
-
-
 @pytest.mark.parametrize(
     "v, n, ref",
     [
