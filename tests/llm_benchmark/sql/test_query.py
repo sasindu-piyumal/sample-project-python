@@ -43,10 +43,6 @@ def test_join_albums() -> None:
     )
 
 
-def test_benchmark_join_albums(benchmark) -> None:
-    benchmark(SqlQuery.join_albums)
-
-
 def test_top_invoices() -> None:
     top = SqlQuery.top_invoices()
     assert top[0][2] == 25.86
