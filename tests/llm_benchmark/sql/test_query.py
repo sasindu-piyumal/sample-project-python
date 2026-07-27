@@ -50,5 +50,13 @@ def test_top_invoices() -> None:
     assert len(top) == 10
 
 
-def test_benchmark_top_invoices(benchmark) -> None:
-    benchmark(SqlQuery.top_invoices)
+@pytest.mark.parametrize(
+    "func, args",
+    [
+        pytest.param(SqlQuery.query_album, ("Presence",), id="query_album"),
+        pytest.param(SqlQuery.join_albums, (), id="join_albums"),
+        pytest.param(SqlQuery.top_invoices, (), id="top_invoices"),
+    ],
+)
+def test_benchmark_sql_query(benchmark, func, args) -> None:
+    benchmark(func, *args)
