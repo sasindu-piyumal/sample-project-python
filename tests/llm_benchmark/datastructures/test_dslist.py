@@ -19,10 +19,6 @@ def test_modify_list(v: List[int], ref: List[int]) -> None:
     assert DsList.modify_list(v) == ref
 
 
-def test_benchmark_modify_list(benchmark) -> None:
-    benchmark(DsList.modify_list, [1, 2, 3, 4, 5])
-
-
 @pytest.mark.parametrize(
     "v, search_value, ref",
     [
