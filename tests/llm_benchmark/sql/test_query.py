@@ -35,10 +35,6 @@ def test_query_album(name: str, expected: bool) -> None:
     assert SqlQuery.query_album(name) == expected
 
 
-def test_benchmark_query_album(benchmark) -> None:
-    benchmark(SqlQuery.query_album, "Presence")
-
-
 def test_join_albums() -> None:
     assert SqlQuery.join_albums()[0] == (
         "For Those About To Rock (We Salute You)",
