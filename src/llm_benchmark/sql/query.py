@@ -41,7 +41,8 @@ class SqlQuery:
         """Join the Album, Artist, and Track tables
 
         Returns:
-            list:
+            list: List of tuples, where each tuple contains
+                  (TrackName: str, AlbumName: str, ArtistName: str)
         """
         cur = _get_conn().cursor()
         cur.execute(
