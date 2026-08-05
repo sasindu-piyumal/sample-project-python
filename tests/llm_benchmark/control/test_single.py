@@ -5,7 +5,7 @@ import pytest
 from llm_benchmark.control.single import SingleForLoop
 
 
-@pytest.mark.parametrize("n, S", [(0, 0), (1, 0), (2, 1), (3, 3), (4, 6), (10, 45)])
+@pytest.mark.parametrize("n, S", [(0, 0), (1, 1), (2, 3), (3, 6), (4, 10), (10, 55)])
 def test_sum_range(n: int, S: int) -> None:
     assert SingleForLoop.sum_range(n) == S
 
