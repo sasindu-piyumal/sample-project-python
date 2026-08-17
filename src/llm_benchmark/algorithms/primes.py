@@ -31,9 +31,10 @@ class Primes:
             dict: Dictionary with cache_size (number of cached entries) and 
                   cache_memory_estimate (approximate bytes used).
         """
-        cache_size = len(_prime_cache)
-        # Rough estimate: Python int ~28 bytes + bool ~28 bytes + dict overhead per entry
-        cache_memory_estimate = cache_size * (28 + 28 + 50)
+        with _cache_lock:
+            cache_size = len(_prime_cache)
+            # Rough estimate: Python int ~28 bytes + bool ~28 bytes + dict overhead per entry
+            cache_memory_estimate = cache_size * (28 + 28 + 50)
         return {
             "cache_size": cache_size,
             "cache_memory_estimate": cache_memory_estimate
