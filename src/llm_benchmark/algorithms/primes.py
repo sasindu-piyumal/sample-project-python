@@ -1,9 +1,12 @@
 from typing import List
 from itertools import compress
 from math import isqrt
+import threading
 
 # Module-level cache for memoized prime checking results
 _prime_cache = {}
+# Lock to protect concurrent access to _prime_cache
+_cache_lock = threading.Lock()
 
 
 class Primes:
