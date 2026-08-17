@@ -12,11 +12,26 @@ _conn_lock = threading.Lock()
 
 
 def _get_conn():
+    """Get or create the shared SQLite connection.
+    
+    Thread-safe lazy initialization of the module-level connection.
+    The lock guards the check-then-create pattern to prevent multiple threads
+    from concurrently initializing separate connections.
+    
+    Returns:
+        sqlite3.Connection: The shared database connection configured with check_same_thread=False.
+        
+    Raises:
+        FileNotFoundError: If the database file does not exist at DB_PATH.
+    """
     global _conn
     if _conn is None:
-        if not DB_PATH.exists():
-            raise FileNotFoundError(f"Missing required SQLite database: {DB_PATH}")
-        _conn = sqlite3.connect(DB_PATH, check_same_thread=False)
+        with _conn_lock:
+            # Double-check pattern: verify again after acquiring lock to handle race
+            if _conn is None:
+                if not DB_PATH.exists():
+                    raise FileNotFoundError(f"Missing required SQLite database: {DB_PATH}")
+                _conn = sqlite3.connect(DB_PATH, check_same_thread=False)
     return _conn
 
 
