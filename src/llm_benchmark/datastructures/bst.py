@@ -93,7 +93,10 @@ class Tree:
             if node.right is None:
                 # Case 1: Creating new leaf node
                 node.right = Node(value)
-                return (0, 1)
+                left_height = -1 if node.left is None else node.left.height
+                new_height = 1 + max(left_height, node.right.height)
+                node.height = new_height
+                return (new_height, 1)
             else:
                 # Case 3: Recursive insertion into right subtree
                 right_height, inserted = self._insert_recursive(node.right, value)
