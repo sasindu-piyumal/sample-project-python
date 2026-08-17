@@ -1,20 +1,37 @@
 import sqlite3
+import threading
 from pathlib import Path
 from textwrap import dedent
 
 # Module-level cached connection — opened lazily once, reused across all calls.
-# Using check_same_thread=False is safe here because the benchmark workload
-# is single-threaded read-only access to the Chinook database.
+# Using check_same_thread=False allows concurrent access from multiple threads.
+# Lock protects the check-then-create pattern to prevent race conditions during initialization.
 DB_PATH = Path(__file__).resolve().parents[3] / "data" / "chinook.db"
 _conn = None
+_conn_lock = threading.Lock()
 
 
 def _get_conn():
+    """Get or create the shared SQLite connection.
+    
+    Thread-safe lazy initialization of the module-level connection.
+    The lock guards the check-then-create pattern to prevent multiple threads
+    from concurrently initializing separate connections.
+    
+    Returns:
+        sqlite3.Connection: The shared database connection configured with check_same_thread=False.
+        
+    Raises:
+        FileNotFoundError: If the database file does not exist at DB_PATH.
+    """
     global _conn
     if _conn is None:
-        if not DB_PATH.exists():
-            raise FileNotFoundError(f"Missing required SQLite database: {DB_PATH}")
-        _conn = sqlite3.connect(DB_PATH, check_same_thread=False)
+        with _conn_lock:
+            # Double-check pattern: verify again after acquiring lock to handle race
+            if _conn is None:
+                if not DB_PATH.exists():
+                    raise FileNotFoundError(f"Missing required SQLite database: {DB_PATH}")
+                _conn = sqlite3.connect(DB_PATH, check_same_thread=False)
     return _conn
 
 

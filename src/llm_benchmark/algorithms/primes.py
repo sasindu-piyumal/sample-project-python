@@ -1,9 +1,12 @@
 from typing import List
 from itertools import compress
 from math import isqrt
+import threading
 
 # Module-level cache for memoized prime checking results
 _prime_cache = {}
+# Lock to protect concurrent access to _prime_cache
+_cache_lock = threading.Lock()
 
 
 class Primes:
@@ -17,7 +20,8 @@ class Primes:
         such as between test runs or when memory optimization is needed.
         """
         global _prime_cache
-        _prime_cache.clear()
+        with _cache_lock:
+            _prime_cache.clear()
 
     @staticmethod
     def get_cache_stats() -> dict:
@@ -27,9 +31,10 @@ class Primes:
             dict: Dictionary with cache_size (number of cached entries) and 
                   cache_memory_estimate (approximate bytes used).
         """
-        cache_size = len(_prime_cache)
-        # Rough estimate: Python int ~28 bytes + bool ~28 bytes + dict overhead per entry
-        cache_memory_estimate = cache_size * (28 + 28 + 50)
+        with _cache_lock:
+            cache_size = len(_prime_cache)
+            # Rough estimate: Python int ~28 bytes + bool ~28 bytes + dict overhead per entry
+            cache_memory_estimate = cache_size * (28 + 28 + 50)
         return {
             "cache_size": cache_size,
             "cache_memory_estimate": cache_memory_estimate
@@ -57,11 +62,12 @@ class Primes:
             >>> Primes.is_prime(4)
             False
         """
-        # Local reference avoids repeated global dict lookup
-        cache = _prime_cache
-        if n in cache:
-            return cache[n]
+        # Check cache first with lock protection
+        with _cache_lock:
+            if n in _prime_cache:
+                return _prime_cache[n]
         
+        # Compute primality (outside lock to minimize critical section)
         if n < 2:
             result = False
         elif n < 4:
@@ -79,7 +85,9 @@ class Primes:
                     break
                 i += 6
         
-        cache[n] = result
+        # Store result in cache with lock protection
+        with _cache_lock:
+            _prime_cache[n] = result
         return result
 
     @staticmethod
@@ -143,11 +151,11 @@ class Primes:
                 # C-level bulk zeroing of composite multiples
                 sieve[i * i:n:i] = bytearray(len(range(i * i, n, i)))
         
-        # Cache individual prime results for future use
-        cache = _prime_cache
-        for i in range(n):
-            if i not in cache:
-                cache[i] = bool(sieve[i])
+        # Cache individual prime results for future use (with lock protection)
+        with _cache_lock:
+            for i in range(n):
+                if i not in _prime_cache:
+                    _prime_cache[i] = bool(sieve[i])
         
         # Sum primes using C-level itertools.compress (avoids Python-level if)
         return sum(compress(range(n), sieve))
