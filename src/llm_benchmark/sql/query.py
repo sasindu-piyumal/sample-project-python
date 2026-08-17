@@ -1,12 +1,14 @@
 import sqlite3
+import threading
 from pathlib import Path
 from textwrap import dedent
 
 # Module-level cached connection — opened lazily once, reused across all calls.
-# Using check_same_thread=False is safe here because the benchmark workload
-# is single-threaded read-only access to the Chinook database.
+# Using check_same_thread=False allows concurrent access from multiple threads.
+# Lock protects the check-then-create pattern to prevent race conditions during initialization.
 DB_PATH = Path(__file__).resolve().parents[3] / "data" / "chinook.db"
 _conn = None
+_conn_lock = threading.Lock()
 
 
 def _get_conn():
