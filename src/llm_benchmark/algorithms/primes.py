@@ -62,11 +62,12 @@ class Primes:
             >>> Primes.is_prime(4)
             False
         """
-        # Local reference avoids repeated global dict lookup
-        cache = _prime_cache
-        if n in cache:
-            return cache[n]
+        # Check cache first with lock protection
+        with _cache_lock:
+            if n in _prime_cache:
+                return _prime_cache[n]
         
+        # Compute primality (outside lock to minimize critical section)
         if n < 2:
             result = False
         elif n < 4:
@@ -84,7 +85,9 @@ class Primes:
                     break
                 i += 6
         
-        cache[n] = result
+        # Store result in cache with lock protection
+        with _cache_lock:
+            _prime_cache[n] = result
         return result
 
     @staticmethod
