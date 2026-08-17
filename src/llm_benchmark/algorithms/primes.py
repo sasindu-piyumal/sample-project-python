@@ -20,7 +20,8 @@ class Primes:
         such as between test runs or when memory optimization is needed.
         """
         global _prime_cache
-        _prime_cache.clear()
+        with _cache_lock:
+            _prime_cache.clear()
 
     @staticmethod
     def get_cache_stats() -> dict:
