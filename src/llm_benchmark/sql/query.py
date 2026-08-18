@@ -95,19 +95,24 @@ class SqlQuery:
             list: List of tuples
         """
         cur = _get_conn().cursor()
-        cur.execute(
-            dedent(
-                """\
-                SELECT 
-                    i.InvoiceId, 
-                    c.FirstName || ' ' || c.LastName AS CustomerName, 
-                    i.Total
-                FROM 
-                    Invoice i
-                JOIN Customer c ON c.CustomerId = i.CustomerId
-                ORDER BY i.Total DESC
-                LIMIT 10
-                """
+        try:
+            cur.execute(
+                dedent(
+                    """\
+                    SELECT 
+                        i.InvoiceId, 
+                        c.FirstName || ' ' || c.LastName AS CustomerName, 
+                        i.Total
+                    FROM 
+                        Invoice i
+                    JOIN Customer c ON c.CustomerId = i.CustomerId
+                    ORDER BY i.Total DESC
+                    LIMIT 10
+                    """
+                )
             )
-        )
-        return cur.fetchall()
+            return cur.fetchall()
+        except sqlite3.Error as exc:
+            raise sqlite3.Error("Failed to query top invoices") from exc
+        finally:
+            cur.close()
