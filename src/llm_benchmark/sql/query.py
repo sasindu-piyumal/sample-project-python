@@ -47,11 +47,16 @@ class SqlQuery:
             bool: True if the album exists, False otherwise
         """
         cur = _get_conn().cursor()
-        cur.execute(
-            "SELECT 1 FROM Album WHERE Title = ? LIMIT 1",
-            (name,),
-        )
-        return cur.fetchone() is not None
+        try:
+            cur.execute(
+                "SELECT 1 FROM Album WHERE Title = ? LIMIT 1",
+                (name,),
+            )
+            return cur.fetchone() is not None
+        except sqlite3.Error as exc:
+            raise sqlite3.Error(f"Failed to query album {name!r}") from exc
+        finally:
+            cur.close()
 
     @staticmethod
     def join_albums() -> list:
