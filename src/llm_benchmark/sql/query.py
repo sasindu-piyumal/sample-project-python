@@ -66,21 +66,26 @@ class SqlQuery:
             list:
         """
         cur = _get_conn().cursor()
-        cur.execute(
-            dedent(
-                """\
-                SELECT 
-                    t.Name AS TrackName,
-                    a.Title AS AlbumName,
-                    ar.Name AS ArtistName
-                FROM 
-                    Track t
-                JOIN Album a ON a.AlbumId = t.AlbumId
-                JOIN Artist ar ON ar.ArtistId = a.ArtistId
-                """
+        try:
+            cur.execute(
+                dedent(
+                    """\
+                    SELECT 
+                        t.Name AS TrackName,
+                        a.Title AS AlbumName,
+                        ar.Name AS ArtistName
+                    FROM 
+                        Track t
+                    JOIN Album a ON a.AlbumId = t.AlbumId
+                    JOIN Artist ar ON ar.ArtistId = a.ArtistId
+                    """
+                )
             )
-        )
-        return cur.fetchall()
+            return cur.fetchall()
+        except sqlite3.Error as exc:
+            raise sqlite3.Error("Failed to join album, artist, and track data") from exc
+        finally:
+            cur.close()
 
     @staticmethod
     def top_invoices() -> list:
