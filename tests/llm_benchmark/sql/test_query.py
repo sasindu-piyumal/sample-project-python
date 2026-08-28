@@ -35,20 +35,12 @@ def test_query_album(name: str, expected: bool) -> None:
     assert SqlQuery.query_album(name) == expected
 
 
-def test_benchmark_query_album(benchmark) -> None:
-    benchmark(SqlQuery.query_album, "Presence")
-
-
 def test_join_albums() -> None:
     assert SqlQuery.join_albums()[0] == (
         "For Those About To Rock (We Salute You)",
         "For Those About To Rock We Salute You",
         "AC/DC",
     )
-
-
-def test_benchmark_join_albums(benchmark) -> None:
-    benchmark(SqlQuery.join_albums)
 
 
 def test_top_invoices() -> None:
@@ -58,5 +50,13 @@ def test_top_invoices() -> None:
     assert len(top) == 10
 
 
-def test_benchmark_top_invoices(benchmark) -> None:
-    benchmark(SqlQuery.top_invoices)
+@pytest.mark.parametrize(
+    "func, args",
+    [
+        pytest.param(SqlQuery.query_album, ("Presence",), id="query_album"),
+        pytest.param(SqlQuery.join_albums, (), id="join_albums"),
+        pytest.param(SqlQuery.top_invoices, (), id="top_invoices"),
+    ],
+)
+def test_benchmark_sql_query(benchmark, func, args) -> None:
+    benchmark(func, *args)
