@@ -38,6 +38,35 @@ def test_benchmark_sum_primes(benchmark) -> None:
     benchmark(Primes.sum_primes, 20)
 
 
+def test_sum_primes_preserves_concurrent_cache_write(monkeypatch) -> None:
+    Primes.clear_cache()
+    real_compress = primes_module.compress
+
+    def write_cache_before_merge(values, selectors):
+        with primes_module._cache_lock:
+            primes_module._prime_cache[3] = False
+        return real_compress(values, selectors)
+
+    monkeypatch.setattr(primes_module, "compress", write_cache_before_merge)
+
+    assert Primes.sum_primes(10) == 17
+    assert Primes.is_prime(3) is False
+
+
+def test_sum_primes_repopulates_cache_after_concurrent_clear(monkeypatch) -> None:
+    Primes.clear_cache()
+    real_compress = primes_module.compress
+
+    def clear_cache_after_merge(values, selectors):
+        Primes.clear_cache()
+        return real_compress(values, selectors)
+
+    monkeypatch.setattr(primes_module, "compress", clear_cache_after_merge)
+
+    assert Primes.sum_primes(10) == 17
+    assert Primes.get_cache_stats()["cache_size"] == 0
+
+
 @pytest.mark.parametrize(
     "n, factors",
     [
