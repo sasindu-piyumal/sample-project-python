@@ -59,23 +59,32 @@ def test_sum_primes_populates_cache() -> None:
 
 def test_clear_cache_invalidates_in_progress_sum_primes(monkeypatch) -> None:
     Primes.clear_cache()
-    population_ready = Event()
-    resume_population = Event()
-    real_enumerate = enumerate
+    publication_ready = Event()
+    resume_publication = Event()
+    real_lock = Lock()
+    worker = None
+    worker_lock_acquisitions = 0
 
-    def pause_before_publication(values):
-        entries = real_enumerate(values)
-        population_ready.set()
-        assert resume_population.wait(timeout=5)
-        return entries
+    class PublicationPausingLock:
+        def __enter__(self):
+            nonlocal worker_lock_acquisitions
+            if current_thread() is worker:
+                worker_lock_acquisitions += 1
+                if worker_lock_acquisitions == 2:
+                    publication_ready.set()
+                    assert resume_publication.wait(timeout=5)
+            real_lock.acquire()
 
-    monkeypatch.setattr(primes_module, "enumerate", pause_before_publication, raising=False)
+        def __exit__(self, *args):
+            real_lock.release()
+
+    monkeypatch.setattr(primes_module, "_cache_lock", PublicationPausingLock())
     worker = Thread(target=Primes.sum_primes, args=(100,))
     worker.start()
 
-    assert population_ready.wait(timeout=5)
+    assert publication_ready.wait(timeout=5)
     Primes.clear_cache()
-    resume_population.set()
+    resume_publication.set()
     worker.join(timeout=5)
 
     assert not worker.is_alive()
