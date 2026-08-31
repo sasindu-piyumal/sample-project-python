@@ -151,11 +151,12 @@ class Primes:
                 # C-level bulk zeroing of composite multiples
                 sieve[i * i:n:i] = bytearray(len(range(i * i, n, i)))
         
-        # Cache individual prime results for future use (with lock protection)
+        # Build cache entries outside the lock, then briefly merge them. Existing
+        # entries win so concurrent writes retain the same semantics as before.
+        cache_entries = {i: bool(value) for i, value in enumerate(sieve)}
         with _cache_lock:
-            for i in range(n):
-                if i not in _prime_cache:
-                    _prime_cache[i] = bool(sieve[i])
+            cache_entries.update(_prime_cache)
+            _prime_cache.update(cache_entries)
         
         # Sum primes using C-level itertools.compress (avoids Python-level if)
         return sum(compress(range(n), sieve))
