@@ -1,3 +1,4 @@
+from threading import Event, Thread
 from typing import List
 
 import pytest
