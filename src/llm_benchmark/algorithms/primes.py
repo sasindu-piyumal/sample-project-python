@@ -142,6 +142,9 @@ class Primes:
         """
         if n <= 2:
             return 0
+
+        with _cache_lock:
+            cache_generation = _cache_generation
         
         # Sieve of Eratosthenes using bytearray:
         # - 1 byte per element vs ~28 bytes for list[bool] (28x less memory)
