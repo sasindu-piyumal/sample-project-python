@@ -21,9 +21,10 @@ class Primes:
         This should be called if you need to reset the memoization cache,
         such as between test runs or when memory optimization is needed.
         """
-        global _prime_cache
+        global _cache_generation
         with _cache_lock:
             _prime_cache.clear()
+            _cache_generation += 1
 
     @staticmethod
     def get_cache_stats() -> dict:
