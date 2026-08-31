@@ -57,6 +57,31 @@ def test_sum_primes_populates_cache() -> None:
     assert Primes.is_prime(8) is False
 
 
+def test_clear_cache_invalidates_in_progress_sum_primes(monkeypatch) -> None:
+    Primes.clear_cache()
+    population_ready = Event()
+    resume_population = Event()
+    real_enumerate = enumerate
+
+    def pause_before_publication(values):
+        entries = real_enumerate(values)
+        population_ready.set()
+        assert resume_population.wait(timeout=5)
+        return entries
+
+    monkeypatch.setattr(primes_module, "enumerate", pause_before_publication, raising=False)
+    worker = Thread(target=Primes.sum_primes, args=(100,))
+    worker.start()
+
+    assert population_ready.wait(timeout=5)
+    Primes.clear_cache()
+    resume_population.set()
+    worker.join(timeout=5)
+
+    assert not worker.is_alive()
+    assert Primes.get_cache_stats()["cache_size"] == 0
+
+
 @pytest.mark.parametrize(
     "n, factors",
     [
