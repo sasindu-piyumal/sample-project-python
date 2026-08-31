@@ -2,6 +2,7 @@ from typing import List
 
 import pytest
 
+import llm_benchmark.algorithms.primes as primes_module
 from llm_benchmark.algorithms.primes import Primes
 
 
