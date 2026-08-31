@@ -5,7 +5,9 @@ import threading
 
 # Module-level cache for memoized prime checking results
 _prime_cache = {}
-# Lock to protect concurrent access to _prime_cache
+# Incremented whenever clear_cache invalidates in-progress cache population.
+_cache_generation = 0
+# Lock to protect concurrent access to cache state.
 _cache_lock = threading.Lock()
 
 
