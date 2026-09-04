@@ -5,6 +5,10 @@ from textwrap import dedent
 _DB_PATH = Path(__file__).resolve().parents[3] / "data" / "chinook.db"
 
 
+def _connect() -> sqlite3.Connection:
+    return sqlite3.connect(f"file:{_DB_PATH}?mode=ro", uri=True)
+
+
 class SqlQuery:
     @staticmethod
     def query_album(name: str) -> bool:
