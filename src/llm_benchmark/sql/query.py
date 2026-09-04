@@ -31,7 +31,9 @@ def _get_conn():
             if _conn is None:
                 if not DB_PATH.exists():
                     raise FileNotFoundError(f"Missing required SQLite database: {DB_PATH}")
-                _conn = sqlite3.connect(DB_PATH, check_same_thread=False)
+                _conn = sqlite3.connect(
+                    DB_PATH.as_uri() + "?mode=ro", uri=True, check_same_thread=False
+                )
     return _conn
 
 
