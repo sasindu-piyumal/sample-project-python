@@ -20,7 +20,7 @@ class SqlQuery:
         Returns:
             bool: True if the album exists, False otherwise
         """
-        with sqlite3.connect(_DB_PATH) as conn:
+        with _connect() as conn:
             cur = conn.cursor()
 
             cur.execute(
@@ -36,7 +36,7 @@ class SqlQuery:
         Returns:
             list:
         """
-        with sqlite3.connect(_DB_PATH) as conn:
+        with _connect() as conn:
             cur = conn.cursor()
 
             cur.execute(
@@ -62,7 +62,7 @@ class SqlQuery:
         Returns:
             list: List of tuples
         """
-        with sqlite3.connect(_DB_PATH) as conn:
+        with _connect() as conn:
             cur = conn.cursor()
 
             cur.execute(
