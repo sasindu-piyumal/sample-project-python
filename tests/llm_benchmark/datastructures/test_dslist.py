@@ -68,3 +68,11 @@ def test_reverse_list(v: List[int], ref: List[int]) -> None:
 
 def test_benchmark_reverse_list(benchmark) -> None:
     benchmark(DsList.reverse_list, [1, 2, 3, 4, 5])
+
+
+def test_rotate_list_normalizes_positions() -> None:
+    values = [1, 2, 3, 4]
+
+    assert DsList.rotate_list(values, 6) == [3, 4, 1, 2]
+    assert DsList.rotate_list(values, -1) == [4, 1, 2, 3]
+    assert DsList.rotate_list([], 3) == []
