@@ -17,6 +17,23 @@ def test_query_album(name: str, expected: bool) -> None:
     assert SqlQuery.query_album(name) == expected
 
 
+def test_database_connection_rejects_writes(tmp_path, monkeypatch) -> None:
+    database = tmp_path / "albums.db"
+    with sqlite3.connect(database) as conn:
+        conn.execute("CREATE TABLE Album (Title TEXT)")
+        conn.execute("INSERT INTO Album VALUES ('Presence')")
+
+    monkeypatch.setattr(query, "_DB_PATH", database)
+
+    assert SqlQuery.query_album("Presence") is True
+    with pytest.raises(sqlite3.OperationalError, match="readonly"):
+        with query._connect() as conn:
+            conn.execute("DELETE FROM Album")
+
+    with sqlite3.connect(database) as conn:
+        assert conn.execute("SELECT COUNT(*) FROM Album").fetchone() == (1,)
+
+
 def test_benchmark_query_album(benchmark) -> None:
     benchmark(SqlQuery.query_album, "Presence")
 
