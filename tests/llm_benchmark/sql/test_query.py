@@ -2,6 +2,7 @@ import sqlite3
 
 import pytest
 
+from llm_benchmark.sql import query
 from llm_benchmark.sql.query import DB_PATH, SqlQuery
 
 
