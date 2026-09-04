@@ -5,7 +5,9 @@ import threading
 
 # Module-level cache for memoized prime checking results
 _prime_cache = {}
-# Lock to protect concurrent access to _prime_cache
+# Incremented whenever clear_cache invalidates in-progress cache population.
+_cache_generation = 0
+# Lock to protect concurrent access to cache state.
 _cache_lock = threading.Lock()
 
 
@@ -19,9 +21,10 @@ class Primes:
         This should be called if you need to reset the memoization cache,
         such as between test runs or when memory optimization is needed.
         """
-        global _prime_cache
+        global _cache_generation
         with _cache_lock:
             _prime_cache.clear()
+            _cache_generation += 1
 
     @staticmethod
     def get_cache_stats() -> dict:
@@ -139,6 +142,9 @@ class Primes:
         """
         if n <= 2:
             return 0
+
+        with _cache_lock:
+            cache_generation = _cache_generation
         
         # Sieve of Eratosthenes using bytearray:
         # - 1 byte per element vs ~28 bytes for list[bool] (28x less memory)
@@ -151,11 +157,14 @@ class Primes:
                 # C-level bulk zeroing of composite multiples
                 sieve[i * i:n:i] = bytearray(len(range(i * i, n, i)))
         
-        # Cache individual prime results for future use (with lock protection)
+        # Build cache entries outside the lock, then briefly publish them if no
+        # clear has invalidated this population. Existing entries win so valid
+        # concurrent writes are preserved.
+        cache_entries = {i: bool(value) for i, value in enumerate(sieve)}
         with _cache_lock:
-            for i in range(n):
-                if i not in _prime_cache:
-                    _prime_cache[i] = bool(sieve[i])
+            if cache_generation == _cache_generation:
+                cache_entries.update(_prime_cache)
+                _prime_cache.update(cache_entries)
         
         # Sum primes using C-level itertools.compress (avoids Python-level if)
         return sum(compress(range(n), sieve))
