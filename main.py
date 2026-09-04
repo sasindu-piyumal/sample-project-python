@@ -87,7 +87,9 @@ def sql():
     print()
 
     print("join_albums()")
-    print(SqlQuery.join_albums()[0])
+    albums = SqlQuery.join_albums()
+    if albums:
+        print(albums[0])
     print()
 
     print("top_invoices()")
