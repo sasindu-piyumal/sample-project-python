@@ -2,6 +2,7 @@ import sqlite3
 
 import pytest
 
+from llm_benchmark.sql import query
 from llm_benchmark.sql.query import DB_PATH, SqlQuery
 
 
@@ -33,6 +34,16 @@ pytestmark = pytest.mark.skipif(
 )
 def test_query_album(name: str, expected: bool) -> None:
     assert SqlQuery.query_album(name) == expected
+
+
+def test_database_connection_rejects_write_attempts() -> None:
+    conn = query._get_conn()
+    album_count = conn.execute("SELECT COUNT(*) FROM Album").fetchone()[0]
+
+    with pytest.raises(sqlite3.OperationalError, match="readonly"):
+        conn.execute("DELETE FROM Album")
+
+    assert conn.execute("SELECT COUNT(*) FROM Album").fetchone()[0] == album_count
 
 
 def test_benchmark_query_album(benchmark) -> None:
