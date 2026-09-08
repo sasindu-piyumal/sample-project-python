@@ -13,17 +13,6 @@ class Primes:
     """Collection of prime number algorithms including efficient and benchmark variants."""
 
     @staticmethod
-    def clear_cache() -> None:
-        """Clear the prime number cache. Useful for testing and memory management.
-        
-        This should be called if you need to reset the memoization cache,
-        such as between test runs or when memory optimization is needed.
-        """
-        global _prime_cache
-        with _cache_lock:
-            _prime_cache.clear()
-
-    @staticmethod
     def get_cache_stats() -> dict:
         """Get statistics about the prime number cache.
         
