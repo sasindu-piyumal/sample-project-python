@@ -379,3 +379,380 @@ class TestDutchFlagPartitionPartitionValidation:
                 assert values[i] == pivot
             else:
                 assert values[i] > pivot
+
+
+@pytest.mark.parametrize(
+    "values, n, expected",
+    [
+        # Mixed positive and negative with positive N
+        ([5, -1, 3, -3, 0, 2], 3, [5, 3, 2]),
+        ([10, -5, 20, -10, 15], 2, [20, 15]),
+        ([-5, -1, -10, -3], 2, [-1, -3]),
+        ([1, -1, 2, -2, 3, -3], 4, [3, 2, 1, -1]),
+        # Large positive and small negative
+        ([100, -50, 1, -1, 50], 3, [100, 50, 1]),
+        ([-100, 100, -1, 1, -50, 50], 3, [100, 50, 1]),
+    ],
+)
+def test_max_n_mixed_signs(values, n, expected):
+    """Test max_n with mixed positive and negative values."""
+    original_list = values.copy()
+    
+    result = Sort.max_n(values, n)
+    
+    # Verify result is in descending order
+    assert result == expected
+    assert result == sorted(result, reverse=True)
+    
+    # Verify source list unchanged
+    assert values == original_list
+
+
+@pytest.mark.parametrize(
+    "values, n, expected_values",
+    [
+        # Duplicates of different values
+        ([5, 5, 3, 3, 1, 1], 4, [5, 5, 3, 3]),
+        ([2, 2, 2, 1, 1, 1], 3, [2, 2, 2]),
+        ([1, 2, 1, 2, 1, 2], 4, [2, 2, 1, 1]),
+        # All same value
+        ([5, 5, 5, 5], 2, [5, 5]),
+        ([3, 3, 3, 3, 3], 5, [3, 3, 3, 3, 3]),
+        # Mix with duplicates
+        ([10, 5, 10, 3, 5, 10], 3, [10, 10, 10]),
+        ([7, 7, 7, 6, 6, 5], 4, [7, 7, 7, 6]),
+    ],
+)
+def test_max_n_with_duplicates(values, n, expected_values):
+    """Test max_n preserves duplicate values in result."""
+    original_list = values.copy()
+    
+    result = Sort.max_n(values, n)
+    
+    # Verify result length
+    assert len(result) == n
+    # Verify result is in descending order
+    assert result == sorted(result, reverse=True)
+    # Verify duplicates preserved
+    assert Counter(result) == Counter(expected_values)
+    
+    # Verify source list unchanged
+    assert values == original_list
+
+
+@pytest.mark.parametrize(
+    "n",
+    [0, 1, 5],
+)
+def test_max_n_empty_input(n):
+    """Test max_n with empty input list."""
+    values = []
+    original_list = values.copy()
+    
+    result = Sort.max_n(values, n)
+    
+    # Empty list should return empty result
+    assert result == []
+    
+    # Verify source list unchanged
+    assert values == original_list
+
+
+@pytest.mark.parametrize(
+    "values, expected",
+    [
+        # Single element, N=0
+        ([5], []),
+        # Multiple elements, N=0
+        ([1, 2, 3, 4, 5], []),
+        # Large values, N=0
+        ([100, 200, 300], []),
+        # With duplicates, N=0
+        ([1, 1, 1, 1], []),
+    ],
+)
+def test_max_n_zero_n(values, expected):
+    """Test max_n when N is 0."""
+    original_list = values.copy()
+    
+    result = Sort.max_n(values, 0)
+    
+    assert result == expected
+    assert result == []
+    
+    # Verify source list unchanged
+    assert values == original_list
+
+
+@pytest.mark.parametrize(
+    "values, expected_sorted",
+    [
+        # N equals length
+        ([5, 1, 3, 2, 4], [5, 4, 3, 2, 1]),
+        ([1], [1]),
+        ([3, 3, 3], [3, 3, 3]),
+        ([10, -5, 0, 5, -10], [10, 5, 0, -5, -10]),
+        ([1, 2, 3, 4, 5], [5, 4, 3, 2, 1]),
+    ],
+)
+def test_max_n_n_equals_length(values, expected_sorted):
+    """Test max_n when N equals the list length."""
+    original_list = values.copy()
+    
+    result = Sort.max_n(values, len(values))
+    
+    # Result should be entire list sorted descending
+    assert result == expected_sorted
+    assert result == sorted(result, reverse=True)
+    
+    # Verify source list unchanged
+    assert values == original_list
+
+
+@pytest.mark.parametrize(
+    "values, n",
+    [
+        # N greater than length
+        ([1, 2, 3], 5),
+        ([5], 10),
+        ([1, 2], 100),
+        ([10, 20, 30, 40, 50], 10),
+        ([-5, 0, 5], 7),
+    ],
+)
+def test_max_n_n_greater_than_length(values, n):
+    """Test max_n when N is greater than list length."""
+    original_list = values.copy()
+    
+    result = Sort.max_n(values, n)
+    
+    # Result should be entire list sorted descending
+    expected_sorted = sorted(values, reverse=True)
+    assert result == expected_sorted
+    assert len(result) == len(values)
+    
+    # Verify in descending order
+    assert result == sorted(result, reverse=True)
+    
+    # Verify source list unchanged
+    assert values == original_list
+
+
+class TestMaxNDescendingOrder:
+    """Tests verifying returned values are in descending order."""
+
+    def test_descending_order_mixed_values(self):
+        """Result is in descending order with mixed values."""
+        values = [3, 1, 4, 1, 5, 9, 2, 6, 5, 3]
+        result = Sort.max_n(values, 5)
+        
+        # Check descending order
+        for i in range(len(result) - 1):
+            assert result[i] >= result[i + 1]
+
+    def test_descending_order_single_element(self):
+        """Single element is trivially in descending order."""
+        values = [42]
+        result = Sort.max_n(values, 1)
+        
+        assert result == [42]
+
+    def test_descending_order_duplicates(self):
+        """Duplicates preserve descending order (non-increasing)."""
+        values = [5, 5, 5, 1, 1, 1]
+        result = Sort.max_n(values, 4)
+        
+        assert result == [5, 5, 5, 1]
+        for i in range(len(result) - 1):
+            assert result[i] >= result[i + 1]
+
+    def test_descending_order_large_n(self):
+        """Descending order maintained with large N values."""
+        values = list(range(1, 11))
+        result = Sort.max_n(values, 10)
+        
+        assert result == list(range(10, 0, -1))
+        for i in range(len(result) - 1):
+            assert result[i] > result[i + 1]
+
+    def test_descending_order_with_negatives(self):
+        """Descending order with negative values."""
+        values = [-5, 10, -3, 8, 0, -1, 5]
+        result = Sort.max_n(values, 4)
+        
+        assert result[0] == 10
+        assert result[1] == 8
+        assert result[2] == 5
+        assert result[3] == 0
+        for i in range(len(result) - 1):
+            assert result[i] >= result[i + 1]
+
+    def test_result_is_sorted_descending(self):
+        """Result equals sorted(result, reverse=True)."""
+        values = [7, 2, 9, 1, 5, 3, 8]
+        result = Sort.max_n(values, 5)
+        
+        assert result == sorted(result, reverse=True)
+
+
+class TestMaxNSourceListUnchanged:
+    """Tests verifying the source list remains unchanged."""
+
+    def test_source_unchanged_normal_case(self):
+        """Source list unchanged after max_n call."""
+        values = [5, 2, 8, 1, 9, 3, 7]
+        original = values.copy()
+        
+        Sort.max_n(values, 3)
+        
+        assert values == original
+
+    def test_source_unchanged_with_duplicates(self):
+        """Source list unchanged even with duplicates."""
+        values = [1, 1, 2, 2, 3, 3]
+        original = values.copy()
+        
+        Sort.max_n(values, 4)
+        
+        assert values == original
+
+    def test_source_unchanged_empty_list(self):
+        """Source list (empty) unchanged."""
+        values = []
+        original = values.copy()
+        
+        Sort.max_n(values, 5)
+        
+        assert values == original
+
+    def test_source_unchanged_single_element(self):
+        """Source list with single element unchanged."""
+        values = [42]
+        original = values.copy()
+        
+        Sort.max_n(values, 1)
+        
+        assert values == original
+
+    def test_source_unchanged_n_greater_than_length(self):
+        """Source list unchanged when N > length."""
+        values = [1, 2, 3]
+        original = values.copy()
+        
+        Sort.max_n(values, 10)
+        
+        assert values == original
+
+    def test_source_unchanged_negative_values(self):
+        """Source list with negatives unchanged."""
+        values = [-10, -5, 0, 5, 10]
+        original = values.copy()
+        
+        Sort.max_n(values, 3)
+        
+        assert values == original
+
+    def test_source_unchanged_multiple_calls(self):
+        """Source list unchanged across multiple max_n calls."""
+        values = [3, 1, 4, 1, 5, 9, 2, 6]
+        original = values.copy()
+        
+        Sort.max_n(values, 2)
+        assert values == original
+        
+        Sort.max_n(values, 4)
+        assert values == original
+        
+        Sort.max_n(values, 8)
+        assert values == original
+
+    def test_source_unchanged_order_preserved(self):
+        """Source list maintains original order."""
+        values = [5, 2, 8, 1, 9, 3, 7, 4, 6, 0]
+        original_order = values.copy()
+        
+        Sort.max_n(values, 5)
+        
+        # Order should be preserved
+        assert values == original_order
+
+
+class TestMaxNBoundaryAndEdgeCases:
+    """Tests for boundary and edge cases."""
+
+    def test_max_n_single_element_n_one(self):
+        """Single element, N=1."""
+        values = [42]
+        result = Sort.max_n(values, 1)
+        
+        assert result == [42]
+
+    def test_max_n_two_elements_n_one(self):
+        """Two elements, N=1."""
+        values = [1, 2]
+        result = Sort.max_n(values, 1)
+        
+        assert result == [2]
+
+    def test_max_n_two_elements_n_two(self):
+        """Two elements, N=2."""
+        values = [1, 2]
+        result = Sort.max_n(values, 2)
+        
+        assert result == [2, 1]
+
+    def test_max_n_large_array_small_n(self):
+        """Large array with small N."""
+        values = list(range(1, 101))
+        result = Sort.max_n(values, 3)
+        
+        assert result == [100, 99, 98]
+
+    def test_max_n_all_equal_values(self):
+        """All elements equal, various N values."""
+        values = [5, 5, 5, 5, 5]
+        
+        result_1 = Sort.max_n(values, 1)
+        assert result_1 == [5]
+        
+        result_3 = Sort.max_n(values, 3)
+        assert result_3 == [5, 5, 5]
+        
+        result_all = Sort.max_n(values, 5)
+        assert result_all == [5, 5, 5, 5, 5]
+
+    def test_max_n_zero_in_list(self):
+        """List contains zero."""
+        values = [-5, 0, 5, -1, 1]
+        result = Sort.max_n(values, 3)
+        
+        assert result == [5, 1, 0]
+
+    def test_max_n_large_range_values(self):
+        """Very large range of values."""
+        values = [1000000, -1000000, 0, 500000, -500000]
+        result = Sort.max_n(values, 3)
+        
+        assert result == [1000000, 500000, 0]
+
+    def test_max_n_alternating_signs(self):
+        """Alternating positive and negative values."""
+        values = [1, -1, 2, -2, 3, -3, 4, -4]
+        result = Sort.max_n(values, 4)
+        
+        assert result == [4, 3, 2, 1]
+
+    def test_max_n_preserves_duplicate_counts(self):
+        """Returned list has correct duplicate counts."""
+        values = [5, 5, 5, 3, 3, 1]
+        result = Sort.max_n(values, 5)
+        
+        assert Counter(result) == Counter([5, 5, 5, 3, 3])
+
+    def test_max_n_result_values_subset_of_input(self):
+        """All result values come from input."""
+        values = [10, 20, 30, 40, 50]
+        result = Sort.max_n(values, 3)
+        
+        for val in result:
+            assert val in values
