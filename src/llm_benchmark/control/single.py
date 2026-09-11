@@ -50,5 +50,7 @@ class SingleForLoop:
         Raises:
             ZeroDivisionError: If m == 0
         """
+        if m == 0:
+            raise ZeroDivisionError("m must be non-zero")
         k = (n - 1) // m
         return m * k * (k + 1) // 2

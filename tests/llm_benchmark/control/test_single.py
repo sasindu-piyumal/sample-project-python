@@ -43,5 +43,10 @@ def test_sum_modulus(n: int, m: int, S: int) -> None:
     assert SingleForLoop.sum_modulus(n, m) == S
 
 
+def test_sum_modulus_zero_divisor() -> None:
+    with pytest.raises(ZeroDivisionError, match="m must be non-zero"):
+        SingleForLoop.sum_modulus(10, 0)
+
+
 def test_benchmark_sum_modulus(benchmark) -> None:
     benchmark(SingleForLoop.sum_modulus, 100, 2)
