@@ -8,6 +8,7 @@ from llm_benchmark.sql.query import SqlQuery
     [
         ("Presence", True),
         ("Roundabout", False),
+        ("' OR 1=1 --", False),
     ],
 )
 def test_query_album(name: str, expected: bool) -> None:
