@@ -7,4 +7,4 @@ source "$DIR/variables.sh"
 # Populate TEST with the test command
 TEST="poetry run pytest --benchmark-skip tests/"
 echo "Running test command: $TEST"
-eval $TEST
+poetry run pytest --benchmark-skip tests/
