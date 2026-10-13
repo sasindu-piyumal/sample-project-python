@@ -162,6 +162,7 @@ def strops():
 
 
 def main():
+    # Run demonstrations for each benchmark category.
     single()
     double()
     sql()
@@ -169,6 +170,7 @@ def main():
     sort()
     dslist()
     strops()
+    # Each demonstration prints its results to standard output.
 
 
 if __name__ == "__main__":
