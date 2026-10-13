@@ -13,6 +13,7 @@ from llm_benchmark.strings.strops import StrOps
 # LOGGING CONFIGURATION
 # ============================================================================
 # test commit
+# test commit01
 
 # Create logs directory if it doesn't exist
 LOGS_DIR = "logs"
