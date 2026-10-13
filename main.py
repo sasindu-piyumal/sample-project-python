@@ -162,11 +162,14 @@ def strops():
 
 
 def main():
+    # Run the numerical and database demonstrations.
     single()
     double()
     sql()
     primes()
     sort()
+
+    # Run the data structure and string demonstrations.
     dslist()
     strops()
 
